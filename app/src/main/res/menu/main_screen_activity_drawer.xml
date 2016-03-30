@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_current_packet"
+            android:icon="@drawable/ic_menu_current_packet"
+            android:title="Текущий пакет" />
+        <item
+            android:id="@+id/nav_cabinet"
+            android:icon="@drawable/ic_menu_cabinet"
+            android:title="Кабинет"/>
+        <item
+            android:id="@+id/nav_messages"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Сообщения" />
+        <!--<item-->
+            <!--android:id="@+id/nav_history"-->
+            <!--android:icon="@drawable/ic_menu_gallery"-->
+            <!--android:title="История" />-->
+    </group>
+
+    <item android:title="">
+        <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Настройки" />
+            <item
+                android:id="@+id/nav_info"
+                android:icon="@drawable/info_contacts"
+                android:title="Контакты" />
+        </menu>
+    </item>
+
+    <item android:title="">
+        <menu>
+            <item
+                android:id="@+id/nav_quit"
+                android:icon="@drawable/nav_quit"
+                android:title="Выйти"
+                />
+        </menu>
+    </item>
+
+</menu>

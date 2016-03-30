@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#569962"
+    tools:context="tv.starcards.starcardstv.application.Login">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="5"
+        android:id="@+id/login_field"
+        android:textSize="14sp"
+        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingRight="5dp"
+        android:paddingEnd="5dp"
+        android:background="@drawable/login_fields_background"
+        android:drawableLeft="@drawable/login_drawable"
+        android:drawableStart="@drawable/login_drawable"
+        android:text=""
+        android:layout_marginTop="25dp"
+        android:layout_marginRight="26dp"
+        android:layout_marginLeft="26dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="5"
+        android:textSize="14sp"
+        android:id="@+id/password_field"
+        android:background="@drawable/login_fields_background"
+        android:drawableLeft="@drawable/password_drawable"
+        android:drawableStart="@drawable/password_drawable"
+        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingRight="5dp"
+        android:paddingEnd="5dp"
+        android:text=""
+        android:layout_below="@+id/login_field"
+        android:layout_alignLeft="@+id/login_field"
+        android:layout_alignStart="@+id/login_field"
+        android:layout_alignRight="@+id/login_field"
+        android:layout_alignEnd="@+id/login_field" />
+
+
+    <com.dd.processbutton.iml.ActionProcessButton
+        android:id="@+id/btnProcess"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Log in"
+        android:textColor="@android:color/white"
+        custom:pb_colorComplete="@color/green_complete"
+        custom:pb_colorNormal="@color/blue_normal"
+        custom:pb_colorPressed="@color/blue_pressed"
+        custom:pb_colorProgress="@color/purple_progress"
+        custom:pb_textComplete="Success"
+        custom:pb_textProgress="Loading"
+        custom:pb_textError="Error"
+        custom:pb_colorError="@color/red_error"
+        android:layout_marginTop="14dp"
+        android:layout_below="@+id/password_field"
+        android:layout_alignRight="@+id/remind_password"
+        android:layout_alignEnd="@+id/remind_password"
+        android:layout_alignLeft="@+id/password_field"
+        android:layout_alignStart="@+id/password_field" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Forgot password?"
+        android:id="@+id/remind_password"
+        android:textColor="@color/white"
+        android:layout_alignTop="@+id/create_account"
+        android:layout_alignRight="@+id/password_field"
+        android:layout_alignEnd="@+id/password_field" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create new account"
+        android:id="@+id/create_account"
+        android:layout_below="@+id/btnProcess"
+        android:layout_alignLeft="@+id/btnProcess"
+        android:layout_alignStart="@+id/btnProcess"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/tv_company"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Star Telecompany LLC"
+        android:layout_above="@+id/tv_copyrights"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/tv_copyrights"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2016 © All Rights Reserved."
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo_grey"
+        android:layout_above="@+id/tv_company"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

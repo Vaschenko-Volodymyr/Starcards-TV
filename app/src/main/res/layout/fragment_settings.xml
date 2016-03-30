@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/fragment_settings_text_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fragment_settings_text_size_title"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <SeekBar
+        android:id="@+id/fragment_settings_text_size_seekbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_settings_text_size"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:max="10"
+        android:progress="5"/>
+
+    <TextView
+        android:id="@+id/fragment_settings_text_example"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fragment_settings_text_size_content"
+        android:layout_below="@+id/fragment_settings_text_size_seekbar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/fragment_settings_text_size_seekbar"
+        android:layout_alignEnd="@+id/fragment_settings_text_size_seekbar"
+        android:gravity="center"/>
+
+</RelativeLayout>

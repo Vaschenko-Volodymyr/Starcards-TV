@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout
+    android:id="@+id/shimmer_view_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:fbutton="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:background="#c4bac4">
+
+        <TextView
+            android:id="@+id/epg_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Сейчас в эфире"/>
+
+        <TextView
+            android:id="@+id/epg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/epg_title"
+            android:text="Sample text"/>
+
+        <info.hoang8f.widget.FButton
+            android:id="@+id/channel_play_native_player"
+            android:layout_height="60dp"
+            android:layout_width="60dp"
+            android:drawableLeft="@drawable/logo_grey"
+            android:paddingLeft="4dp"
+            fbutton:buttonColor="@color/color_native"
+            fbutton:shadowColor="@color/color_native_shade"
+            fbutton:shadowEnabled="true"
+            fbutton:shadowHeight="5dp"
+            fbutton:cornerRadius="5dp"
+            android:layout_alignTop="@+id/epg_title"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <info.hoang8f.widget.FButton
+            android:id="@+id/channel_play_vlc_player"
+            android:layout_height="60dp"
+            android:layout_width="60dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
+            android:paddingLeft="6dp"
+            android:drawableLeft="@mipmap/vlc_logo"
+            fbutton:buttonColor="@color/color_vlc"
+            fbutton:shadowColor="@color/color_vlc_shade"
+            fbutton:shadowEnabled="true"
+            fbutton:shadowHeight="5dp"
+            fbutton:cornerRadius="5dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/channel_play_native_player"
+            android:layout_toStartOf="@+id/channel_play_native_player" />
+
+    </RelativeLayout>
+
+</com.facebook.shimmer.ShimmerFrameLayout>
+

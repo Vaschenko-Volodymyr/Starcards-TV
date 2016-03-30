@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#65a768</color>
+    <color name="colorPrimaryDark">#467850</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="grey">#44c1b0b0</color>
+    <color name="strong_grey">#969696</color>
+
+    <color name="tab_selected">#8eef38</color>
+    <color name="tab_focused">#8eef38</color>
+    <color name="tab_pressed">#5e9e26</color>
+    <color name="primary_material_light">#72c02c</color>
+
+    <color name="button_pressed">#e2f2ba</color>
+    <color name="button">#fffddb</color>
+
+    <color name="black_overlay">#66000000</color>
+
+    <color name="color_native">#8FFF2A</color>
+    <color name="color_native_shade">#569962</color>
+
+    <color name="color_vlc">#f99c74</color>
+    <color name="color_vlc_shade">#a42a0f</color>
+
+</resources>

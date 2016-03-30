@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="16dp"
+    android:paddingLeft="16dp"
+    android:paddingStart="16dp"
+    android:paddingRight="16dp"
+    android:paddingEnd="16dp"
+    android:background="@color/grey"
+    android:id="@+id/channel_container">
+
+    <ImageView
+        android:id="@+id/channels_background_img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alpha="0.3"
+        android:scaleType="centerCrop"
+        android:layout_alignBottom="@+id/channels"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/channels"
+        android:background="@drawable/channels_list_background"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/channel_logo"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_below="@+id/channel_title"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <ImageView
+            android:id="@+id/channel_denied_ico"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@mipmap/channel_is_unavailable"
+            android:visibility="gone"
+            android:layout_above="@+id/channel_epg_title"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:id="@+id/channel_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Channels name"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/apptheme_edit_text_holo_light"
+            android:textSize="28sp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/channel_genre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Channels genre"
+            android:textSize="18sp"
+            android:layout_below="@+id/chanel_genre_title"
+            android:layout_toRightOf="@+id/channel_logo"
+            android:layout_toEndOf="@+id/channel_logo" />
+
+        <TextView
+            android:id="@+id/channel_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Channels number"
+            android:textSize="18sp"
+            android:layout_below="@+id/channel_title"
+            android:layout_toRightOf="@+id/channel_number_title"
+            android:layout_toEndOf="@+id/channel_number_title" />
+
+        <TextView
+            android:id="@+id/channel_pvr"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="Разрешена запись ТВ канала"
+            android:textSize="10sp"
+            android:layout_alignBottom="@+id/channel_logo"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <ImageView
+            android:id="@+id/channel_is_archiving"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/channel_is_archiving"
+            android:layout_above="@+id/channel_pvr"
+            android:layout_toRightOf="@+id/channel_logo"
+            android:layout_toEndOf="@+id/channel_logo" />
+
+        <ImageView
+            android:id="@+id/channel_is_censored"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/channel_is_censored"
+            android:layout_alignTop="@+id/channel_is_favorite"
+            android:layout_toRightOf="@+id/channel_is_favorite"
+            android:layout_toEndOf="@+id/channel_is_favorite" />
+
+        <ImageView
+            android:id="@+id/channel_is_favorite"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/channel_is_favorite"
+            android:layout_alignTop="@+id/channel_is_archiving"
+            android:layout_toRightOf="@+id/channel_is_archiving"
+            android:layout_toEndOf="@+id/channel_is_archiving" />
+
+        <TextView
+            android:id="@+id/channel_number_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="№: "
+            android:textSize="18sp"
+            android:layout_below="@+id/channel_title"
+            android:layout_toRightOf="@+id/channel_logo"
+            android:layout_toEndOf="@+id/channel_logo" />
+
+        <TextView
+            android:id="@+id/chanel_genre_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Жанр: "
+            android:textSize="18sp"
+            android:layout_below="@+id/channel_number_title"
+            android:layout_toRightOf="@+id/channel_logo"
+            android:layout_toEndOf="@+id/channel_logo" />
+
+        <TextView
+            android:id="@+id/channel_epg_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Программа на сегодня"
+            android:layout_below="@+id/channel_logo"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:textSize="22sp"
+            android:textColor="#510DCC"/>
+
+
+        <TextView
+            android:id="@+id/channel_epg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Channel EPG"
+            android:layout_below="@+id/channel_epg_title"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textAlignment="center" />
+
+        <ImageButton
+            android:id="@+id/channel_play_native_player"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:src="@mipmap/channel_play_native_player"
+            android:scaleType="centerCrop"
+            android:background="@android:color/transparent"
+            android:layout_below="@+id/channel_epg"
+            android:layout_toLeftOf="@+id/channel_play_vlc_player"
+            android:layout_toStartOf="@+id/channel_play_vlc_player" />
+
+        <ImageButton
+            android:id="@+id/channel_play_vlc_player"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:src="@mipmap/channel_play_vlc_player"
+            android:scaleType="centerCrop"
+            android:background="@android:color/transparent"
+            android:layout_alignTop="@+id/channel_play_native_player"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
