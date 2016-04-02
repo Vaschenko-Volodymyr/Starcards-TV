@@ -12,6 +12,9 @@
     <ListView
         android:id="@+id/tv_channels"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" >
+
+        <requestFocus/>
+    </ListView>
 
 </com.yalantis.phoenix.PullToRefreshView>

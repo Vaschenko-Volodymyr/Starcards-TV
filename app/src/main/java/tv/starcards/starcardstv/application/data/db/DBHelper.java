@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
 
     // Database name and version
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 15;
     private static final String DATABASE_NAME = "user_info.db";
 
     //Table, which contains tokens
@@ -55,6 +55,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String CHANNEL_LOGO              = "logo";
     public static final String CHANNEL_MONITORING_STATUS = "monitoring_status";
     public static final String CHANNEL_PACKET_ID         = "packet_id";
+    public static final String CHANNEL_NAME_TRANSLIT     = "name_translit";
 
 
     public DBHelper(Context context) {
@@ -117,6 +118,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 CHANNEL_LOGO              + " TEXT, " +
                 CHANNEL_MONITORING_STATUS + " TEXT, " +
                 CHANNEL_PACKET_ID         + " TEXT, " +
+                CHANNEL_NAME_TRANSLIT     + " TEXT, " +
                 "FOREIGN KEY (" + CHANNEL_PACKET_ID + ") REFERENCES " + PACKET_TABLE + "(" + PACKET_ID + ")" +
                 ")"
         );
@@ -126,7 +128,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO " + LOGGED_DETAILS_TABLE + " VALUES (\"false\", \"false\" )");
         db.execSQL("INSERT INTO " + USER_INFO_TABLE + " VALUES (\"null\", \"null\", \"null\", \"null\", \"null\")");
         db.execSQL("INSERT INTO " + PACKET_TABLE + " VALUES (\"null\", \"null\", \"null\", \"null\", \"null\", \"null\")");
-        db.execSQL("INSERT INTO " + CHANNELS_TABLE + " VALUES (\"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\" )");
+        db.execSQL("INSERT INTO " + CHANNELS_TABLE + " VALUES (\"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\" )");
     }
 
     @Override

@@ -3,42 +3,22 @@ package tv.starcards.starcardstv.application.ui.adaptors;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
+import android.widget.Filter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import jp.wasabeef.blurry.Blurry;
 import tv.starcards.starcardstv.MainScreenActivity;
 import tv.starcards.starcardstv.R;
-import tv.starcards.starcardstv.application.API;
-import tv.starcards.starcardstv.application.http.HttpGetWithPacketToken;
 import tv.starcards.starcardstv.application.ui.models.TvChannelListModel;
-import tv.starcards.starcardstv.application.util.DateConverter;
 
 public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListener {
 
@@ -142,37 +122,43 @@ public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListen
         return view;
     }
 
+    public void updateResults(ArrayList results) {
+        data = results;
+        //Triggers the list update
+        notifyDataSetChanged();
+    }
+
     public void onClick(View view) {
 
     }
 
-    private class OnStarcardsPlayerClickListener implements View.OnClickListener {
-        private int position;
-
-        OnStarcardsPlayerClickListener(int position){
-            this.position = position;
-        }
-
-        @Override
-        public void onClick(View arg0) {
-            MainScreenActivity container = (MainScreenActivity) activity;
-            container.onStarcardsPlayerClick(position);
-        }
-    }
-
-    private class OnVLCPlayerClickListener implements View.OnClickListener {
-        private int position;
-
-        OnVLCPlayerClickListener(int position){
-            this.position = position;
-        }
-
-        @Override
-        public void onClick(View arg0) {
-            MainScreenActivity container = (MainScreenActivity) activity;
-            container.onVLCPlayerClick(position);
-        }
-    }
+//    private class OnStarcardsPlayerClickListener implements View.OnClickListener {
+//        private int position;
+//
+//        OnStarcardsPlayerClickListener(int position){
+//            this.position = position;
+//        }
+//
+//        @Override
+//        public void onClick(View arg0) {
+//            MainScreenActivity container = (MainScreenActivity) activity;
+//            container.onStarcardsPlayerClick(position);
+//        }
+//    }
+//
+//    private class OnVLCPlayerClickListener implements View.OnClickListener {
+//        private int position;
+//
+//        OnVLCPlayerClickListener(int position){
+//            this.position = position;
+//        }
+//
+//        @Override
+//        public void onClick(View arg0) {
+//            MainScreenActivity container = (MainScreenActivity) activity;
+//            container.onVLCPlayerClick(position);
+//        }
+//    }
 
     private class OnLongItemClickListener implements View.OnLongClickListener {
         private int position;
@@ -188,4 +174,5 @@ public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListen
             return false;
         }
     }
+
 }

@@ -5,15 +5,18 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
+import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.daimajia.swipe.SwipeLayout;
+import com.gordonwong.materialsheetfab.MaterialSheetFab;
+import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import java.util.ArrayList;
@@ -21,20 +24,23 @@ import java.util.ArrayList;
 import tv.starcards.starcardstv.MainScreenActivity;
 import tv.starcards.starcardstv.R;
 import tv.starcards.starcardstv.application.data.channelsdata.ChannelsData;
+import tv.starcards.starcardstv.application.data.db.DBHelper;
 import tv.starcards.starcardstv.application.data.state.IsLoggedByPacket;
 import tv.starcards.starcardstv.application.ui.adaptors.TvChannelsAdaptor;
 import tv.starcards.starcardstv.application.ui.models.TvChannelListModel;
 import tv.starcards.starcardstv.application.data.channelsdata.ChannelsDataRequest;
+import tv.starcards.starcardstv.application.widgets.Fab;
 
 public class ChannelsFragment extends Fragment {
 
+    public static MaterialSheetFab              materialSheetFab;
     public static TvChannelsAdaptor             adapter;
     public static Activity                      channelsListViewActivity = null;
     public static ArrayList<TvChannelListModel> channelsListArray;
     public static ListView                      channels;
     public static PullToRefreshView             mPullToRefreshView;
 
-    private static final String TAG = "ChannelsFragment";
+    private static final String                 TAG = "ChannelsFragment";
 
     private String                              packetId;
     private ChannelsDataRequest                 channelsData;
@@ -52,11 +58,46 @@ public class ChannelsFragment extends Fragment {
         resources = getResources();
         adapter = new TvChannelsAdaptor(channelsListViewActivity, channelsListArray, resources);
         adapter = null;
+
+
+
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         packetId = getArguments().getString("packetId");
         View v = inflater.inflate(R.layout.fragment_channels_activity, container, false);
+
+//        this.getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        Fab fab = (Fab) v.findViewById(R.id.fab);
+        View sheetView = v.findViewById(R.id.fab_sheet);
+        View overlay = v.findViewById(R.id.overlay);
+        int sheetColor = getResources().getColor(R.color.colorPrimary);
+        int fabColor = getResources().getColor(R.color.color_vlc);
+
+        // Initialize material sheet FAB
+        materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlay,
+                sheetColor, fabColor);
+        materialSheetFab.setEventListener(new MaterialSheetFabEventListener() {
+            @Override
+            public void onShowSheet() {
+                // Called when the material sheet's "show" animation starts.
+            }
+
+            @Override
+            public void onSheetShown() {
+                // Called when the material sheet's "show" animation ends.
+            }
+
+            @Override
+            public void onHideSheet() {
+                // Called when the material sheet's "hide" animation starts.
+            }
+
+            public void onSheetHidden() {
+                // Called when the material sheet's "hide" animation ends.
+            }
+        });
 
         channelsData = new ChannelsDataRequest(getContext(), packetId, resources);
 
@@ -86,7 +127,6 @@ public class ChannelsFragment extends Fragment {
             MainScreenActivity.pDialog.setTitleText("Loading");
             MainScreenActivity.pDialog.show();
             ChannelsData.getInstance().resetChannelsData();
-            ChannelsData.getInstance().resetChannelsData();
             requestChannelsData();
         } else {
             ChannelsData.getInstance().loadChannelsFromDB();
@@ -103,17 +143,29 @@ public class ChannelsFragment extends Fragment {
 //            }
 //        });
         search = (TextView) v.findViewById(R.id.channels_toolbar_search);
-        search.setOnClickListener(new View.OnClickListener() {
+        search.addTextChangedListener(new TextWatcher() {
+
             @Override
-            public void onClick(View v) {
-                search.setText("");
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                if (search.getText().toString().equals("search")) {
+                    search.setText("");
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ChannelsData.getInstance().loadChannelsFromDB(DBHelper.CHANNEL_NAME, s);
             }
         });
 
-        v.setOnClickListener(new View.OnClickListener() {
+            v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                search.setText("Search in process");
+                search.setText("search");
             }
         });
         return v;

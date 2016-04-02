@@ -11,6 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import tv.starcards.starcardstv.MainScreenActivity;
 import tv.starcards.starcardstv.application.data.db.DBHelper;
 import tv.starcards.starcardstv.application.ui.adaptors.TvChannelsAdaptor;
@@ -20,16 +24,17 @@ import tv.starcards.starcardstv.application.util.DateConverter;
 import tv.starcards.starcardstv.application.util.ExpandableListViewConverter;
 import tv.starcards.starcardstv.application.util.ListViewConverter;
 import tv.starcards.starcardstv.application.util.Parser;
+import tv.starcards.starcardstv.application.util.Translit;
 
 public class ChannelsData {
 
-    private static final String TAG = "PacketData";
+    private static final String TAG = "ChannelsData";
     private static ChannelsData ourInstance = new ChannelsData();
 
-    private DBHelper                    dbHelper;
-    private Parser                      parser;
-    private DateConverter               dateConverter;
-    private Resources                   resources;
+    private DBHelper dbHelper;
+    private Parser parser;
+    private DateConverter dateConverter;
+    private Resources resources;
     private ListViewConverter converter;
 
     private ChannelsData() {
@@ -49,7 +54,7 @@ public class ChannelsData {
 
     public void saveChannelsToDB(JSONObject response, String packetId) throws JSONException {
         JSONArray array = response.getJSONArray("results");
-        Log.w(TAG, "SaveChannelsToDB - Packets JSON array: " + array.toString());
+        Log.w(TAG, "SaveChannelsToDB: Packets JSON array: " + array.toString());
 
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
@@ -90,9 +95,10 @@ public class ChannelsData {
             } else {
                 query = query + "\"true\", ";
             }
-            query = query + "\"" + packetId + "\") ";
+            query = query + "\"" + packetId + "\", ";
+            query = query + "\"" + Translit.translit(channel.getString("name")) + "\") ";
             database.execSQL(query);
-            Log.d(TAG, query);
+            Log.d(TAG, "saveChannelsToDB: " + query);
         }
 
         Cursor cursor = database.query(DBHelper.CHANNELS_TABLE, null, null, null, null, null, null);
@@ -111,49 +117,7 @@ public class ChannelsData {
                 int favorite = cursor.getColumnIndex(DBHelper.CHANNEL_FAVORITE);
                 int logo = cursor.getColumnIndex(DBHelper.CHANNEL_LOGO);
                 int monitoring_status = cursor.getColumnIndex(DBHelper.CHANNEL_MONITORING_STATUS);
-
-                String message =
-                        " id = " + cursor.getString(id) +
-                                ", name = " + cursor.getString(name) +
-                                ", genre_id = " + cursor.getString(genre_id) +
-                                ", number = " + cursor.getString(number) +
-                                ", url = " + cursor.getString(url) +
-                                ", archive = " + cursor.getString(archive) +
-                                ", archive_range = " + cursor.getString(archive_range) +
-                                ", prv = " + cursor.getString(pvr) +
-                                ", censored = " + cursor.getString(censored) +
-                                ", favorite = " + cursor.getString(favorite) +
-                                ", logo = " + cursor.getString(logo) +
-                                ", monitoring_status = " + cursor.getString(monitoring_status);
-                Log.d(TAG, "Got from DB - channel " + i + ": " + message);
-                i++;
-            }
-        }
-
-        cursor.close();
-        database.close();
-    }
-
-    public void loadChannelsFromDB() {
-
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-        Cursor cursor = database.query(DBHelper.CHANNELS_TABLE, null, null, null, null, null, null);
-        int i = 1;
-        if (cursor.moveToFirst()) {
-            while (cursor.moveToNext()) {
-                int id = cursor.getColumnIndex(DBHelper.CHANNEL_ID);
-                int name = cursor.getColumnIndex(DBHelper.CHANNEL_NAME);
-                int genre_id = cursor.getColumnIndex(DBHelper.CHANNEL_GENRE_ID);
-                int number = cursor.getColumnIndex(DBHelper.CHANNEL_NUMBER);
-                int url = cursor.getColumnIndex(DBHelper.CHANNEL_URL);
-                int archive = cursor.getColumnIndex(DBHelper.CHANNEL_ARCHIVE);
-                int archive_range = cursor.getColumnIndex(DBHelper.CHANNEL_ARCHIVE_RANGE);
-                int pvr = cursor.getColumnIndex(DBHelper.CHANNEL_PVR);
-                int censored = cursor.getColumnIndex(DBHelper.CHANNEL_CENSORED);
-                int favorite = cursor.getColumnIndex(DBHelper.CHANNEL_FAVORITE);
-                int logo = cursor.getColumnIndex(DBHelper.CHANNEL_LOGO);
-                int monitoring_status = cursor.getColumnIndex(DBHelper.CHANNEL_MONITORING_STATUS);
-                int packerId = cursor.getColumnIndex(DBHelper.CHANNEL_PACKET_ID);
+                int nameTranslit = cursor.getColumnIndex(DBHelper.CHANNEL_NAME_TRANSLIT);
 
                 String message =
                         " id = " + cursor.getString(id) +
@@ -168,65 +132,134 @@ public class ChannelsData {
                                 ", favorite = " + cursor.getString(favorite) +
                                 ", logo = " + cursor.getString(logo) +
                                 ", monitoring_status = " + cursor.getString(monitoring_status) +
-                                ", packetId = " + cursor.getString(packerId);
+                                ", name_translit = " + cursor.getString(nameTranslit);
                 Log.d(TAG, "Got from DB - channel " + i + ": " + message);
                 i++;
-
-                final TvChannelListModel model = new TvChannelListModel();
-                model.setId(cursor.getString(id));
-                model.setTitle(cursor.getString(name));
-                model.setGenre(cursor.getString(genre_id));
-                model.setNumber(cursor.getString(number));
-                model.setUrl(cursor.getString(url));
-
-                if (cursor.getInt(archive)==0) {
-                    model.setArchive(false);
-                } else {
-                    model.setArchive(true);
-                }
-
-                model.setArchiveRange(cursor.getString(archive_range));
-
-                if (cursor.getString(pvr).equals("false")) {
-                    model.setPvr(false);
-                } else {
-                    model.setPvr(true);
-                }
-
-                if (cursor.getString(censored).equals("false")) {
-                    model.setCensored(false);
-                } else {
-                    model.setCensored(true);
-                }
-
-                if (cursor.getString(favorite).equals("false")) {
-                    model.setFavorite(false);
-                } else {
-                    model.setFavorite(true);
-                }
-
-                model.setLogo(cursor.getString(logo).replace("\\", ""));
-
-                if (cursor.getString(monitoring_status).equals("false")) {
-                    model.setAvailable(false);
-                } else {
-                    model.setAvailable(true);
-                }
-                model.setPacketId(cursor.getString(packerId));
-                ChannelsFragment.channelsListArray.add(model);
             }
-            ChannelsFragment.adapter = new TvChannelsAdaptor(ChannelsFragment.channelsListViewActivity, ChannelsFragment.channelsListArray, resources);
-            ChannelsFragment.channels.setAdapter(ChannelsFragment.adapter);
-            converter.setListViewHeightBasedOnChildren(ChannelsFragment.channels);
+        }
+
+        cursor.close();
+        database.close();
+    }
+
+    public void loadChannelsFromDB() {
+        loadChannelsFromDB("", "");
+    }
+
+    public void loadChannelsFromDB(String column, CharSequence condition) {
+
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+//        Cursor cursor = database.query(DBHelper.CHANNELS_TABLE, null, null, null, null, null, null);
+        String query = "SELECT * FROM " + DBHelper.CHANNELS_TABLE + " ";
+        if (!column.equals("")) {
+            if (column.equals(DBHelper.CHANNEL_NAME)) {
+                condition = Translit.translit(condition.toString());
+                column = DBHelper.CHANNEL_NAME_TRANSLIT;
+                query = query + "WHERE " + column + " LIKE \"%" + condition + "%\"" +
+                                  " OR " + column + " LIKE \"%" + condition + "\"" +
+                                  " OR " + column + " LIKE \"" + condition + "%\"" +
+                                  " OR " + column + " LIKE \"" + condition + "\"" +
+                        " ORDER BY " + DBHelper.CHANNEL_NAME;
+            }
+        }
+
+        Log.d(TAG, "loadChannelsFromDB: SQL LIKE query -> " + query);
+
+        Cursor cursor = database.rawQuery(query, null);
+        int i = 0;
+
+        Map<Integer, Map<String, String>> channel = new HashMap<>();
+        if (cursor.moveToFirst()) {
+            do {
+                Map<String, String> info = new HashMap<>();
+
+                info.put("id", cursor.getString(cursor.getColumnIndex(DBHelper.CHANNEL_ID)));
+                info.put("name", cursor.getString(cursor.getColumnIndex(DBHelper.CHANNEL_NAME)));
+                info.put("genre_id", cursor.getString(cursor.getColumnIndex(DBHelper.CHANNEL_GENRE_ID)));
+                info.put("number", cursor.getString(cursor.getColumnIndex(DBHelper.CHANNEL_NUMBER)));
+                info.put("url", cursor.getString(cursor.getColumnIndex(DBHelper.CHANNEL_URL)));
+                info.put("archive", cursor.getString(cursor.getColumnIndex(DBHelper.CHANNEL_ARCHIVE)));
+                info.put("archive_range", cursor.getString(cursor.getColumnIndex(DBHelper.CHANNEL_ARCHIVE_RANGE)));
+                info.put("pvr", cursor.getString(cursor.getColumnIndex(DBHelper.CHANNEL_PVR)));
+                info.put("censored", cursor.getString(cursor.getColumnIndex(DBHelper.CHANNEL_CENSORED)));
+                info.put("favorite", cursor.getString(cursor.getColumnIndex(DBHelper.CHANNEL_FAVORITE)));
+                info.put("logo", cursor.getString(cursor.getColumnIndex(DBHelper.CHANNEL_LOGO)));
+                info.put("monitoring_status", cursor.getString(cursor.getColumnIndex(DBHelper.CHANNEL_MONITORING_STATUS)));
+                info.put("name_translit", cursor.getString(cursor.getColumnIndex(DBHelper.CHANNEL_NAME_TRANSLIT)));
+                info.put("packetId", cursor.getString(cursor.getColumnIndex(DBHelper.CHANNEL_PACKET_ID)));
+
+                channel.put(i++, info);
+            } while (cursor.moveToNext());
+            attachChannelDataToRow(channel);
         }
         cursor.close();
         database.close();
     }
 
+    private void attachChannelDataToRow(Map<Integer, Map<String, String>> channel) {
+        ChannelsFragment.channelsListArray.clear();
+        if (channel.size() >= 1) {
+            for (int i = 0; i < channel.size(); i++) {
+                Map<String, String> info = channel.get(i);
+                final TvChannelListModel model = new TvChannelListModel();
+                Log.d(TAG, "attachChannelDataToRow: Channel = " + info.toString());
+                if (!info.get("id").equals("null")) {
+                    model.setId(info.get("id"));
+                    model.setTitle(info.get("name"));
+                    model.setGenre(info.get("genre_id"));
+                    model.setNumber(info.get("number"));
+                    model.setUrl(info.get("url"));
+
+                    if (info.get("archive").equals("false")) {
+                        model.setArchive(false);
+                    } else {
+                        model.setArchive(true);
+                    }
+
+                    model.setArchiveRange(info.get("archive_range"));
+
+                    if (info.get("pvr").equals("false")) {
+                        model.setPvr(false);
+                    } else {
+                        model.setPvr(true);
+                    }
+
+                    if (info.get("censored").equals("false")) {
+                        model.setCensored(false);
+                    } else {
+                        model.setCensored(true);
+                    }
+
+                    if (info.get("favorite").equals("false")) {
+                        model.setFavorite(false);
+                    } else {
+                        model.setFavorite(true);
+                    }
+
+                    model.setLogo(info.get("logo").replace("\\", ""));
+
+                    if (info.get("monitoring_status").equals("false")) {
+                        model.setAvailable(false);
+                    } else {
+                        model.setAvailable(true);
+                    }
+                    model.setPacketId(info.get("packerId"));
+                    ChannelsFragment.channelsListArray.add(model);
+                }
+            }
+        } else {
+            // TODO: show user "No such results"
+        }
+        ChannelsFragment.adapter = new TvChannelsAdaptor(ChannelsFragment.channelsListViewActivity, ChannelsFragment.channelsListArray, resources);
+        ChannelsFragment.adapter.updateResults(ChannelsFragment.channelsListArray);
+        ChannelsFragment.channels.setAdapter(ChannelsFragment.adapter);
+        converter.setListViewHeightBasedOnChildren(ChannelsFragment.channels);
+    }
+
     public void resetChannelsData() {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         database.execSQL("DELETE FROM " + DBHelper.CHANNELS_TABLE + " ;");
-        database.execSQL("INSERT INTO " + DBHelper.CHANNELS_TABLE + " VALUES (\"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\" )");
+        database.execSQL("INSERT INTO " + DBHelper.CHANNELS_TABLE + " VALUES (\"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\", \"null\" )");
         database.close();
     }
 }
