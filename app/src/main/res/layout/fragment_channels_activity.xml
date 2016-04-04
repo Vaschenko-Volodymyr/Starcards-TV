@@ -1,47 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    >
+    android:fitsSystemWindows="true">
 
-        <android.support.design.widget.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/AppBarOverlay">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/packet_content_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/white"
-                app:popupTheme="@style/PopupOverlay">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/channels_toolbar_background">
-
-                    <EditText
-                        android:id="@+id/channels_toolbar_search"
-                        android:layout_width="280dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:background="@drawable/apptheme_textfield_disabled_focused_holo_light"
-                        android:drawableLeft="@drawable/channels_toolbar_search_drawable"
-                        android:drawableStart="@drawable/channels_toolbar_search_drawable"
-                        android:text=""
-                        android:textColor="@color/strong_grey" />
-
-                </RelativeLayout>
-            </android.support.v7.widget.Toolbar>
-
-        </android.support.design.widget.AppBarLayout>
-
-        <include layout="@layout/fragment_channels_content" />
+    <include layout="@layout/fragment_channels_content" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -53,34 +17,30 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/channels_toolbar_search_drawable"
             android:layout_alignParentRight="true"
-            android:windowSoftInputMode="adjustResize"/>
+            android:src="@drawable/channels_toolbar_search_drawable"
+            android:windowSoftInputMode="adjustResize" />
 
         <com.gordonwong.materialsheetfab.DimOverlayFrameLayout
             android:id="@+id/overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <!-- Circular reveal container for the sheet -->
         <io.codetail.widget.RevealLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="end|bottom"
             android:orientation="vertical">
 
-            <!-- Sheet that contains your items -->
             <android.support.v7.widget.CardView
                 android:id="@+id/fab_sheet"
                 style="@style/Widget.MaterialSheetFab.Sheet">
 
-                <!-- Sheet items -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- Recording -->
                     <TextView
                         android:id="@+id/fab_sheet_item_favorite"
                         style="@style/TextAppearance.MaterialSheetFab.Sheet.Item"
@@ -88,7 +48,6 @@
                         android:drawableStart="@mipmap/channel_is_favorite"
                         android:text="Любимые" />
 
-                    <!-- Reminder -->
                     <TextView
                         android:id="@+id/fab_sheet_item_available"
                         style="@style/TextAppearance.MaterialSheetFab.Sheet.Item"
@@ -96,7 +55,6 @@
                         android:drawableStart="@drawable/ic_menu_share"
                         android:text="Доступные" />
 
-                    <!-- Photo -->
                     <TextView
                         android:id="@+id/fab_sheet_item_censored"
                         style="@style/TextAppearance.MaterialSheetFab.Sheet.Item"
@@ -104,35 +62,8 @@
                         android:drawableStart="@drawable/tv_channel_censored"
                         android:text="Каналы 18+" />
 
-                    <!-- Note -->
-                    <!--<LinearLayout-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:background="@color/theme_accent">-->
-
-                    <!--<TextView-->
-                    <!--android:id="@+id/fab_sheet_item_note"-->
-                    <!--style="@style/TextAppearance.MaterialSheetFab.Sheet.Item"-->
-                    <!--android:drawableLeft="@drawable/ic_create_grey600_24dp"-->
-                    <!--android:drawableStart="@drawable/ic_create_grey600_24dp"-->
-                    <!--android:text="@string/createnote" />-->
-                    <!--</LinearLayout>-->
-
                 </LinearLayout>
-
             </android.support.v7.widget.CardView>
-
         </io.codetail.widget.RevealLinearLayout>
-
     </RelativeLayout>
-
-
-    <!--<android.support.design.widget.FloatingActionButton-->
-    <!--android:id="@+id/fab"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="bottom|end"-->
-    <!--android:layout_margin="@dimen/fab_margin"-->
-    <!--android:src="@mipmap/channels_filter_invisible" />-->
-
 </android.support.design.widget.CoordinatorLayout>

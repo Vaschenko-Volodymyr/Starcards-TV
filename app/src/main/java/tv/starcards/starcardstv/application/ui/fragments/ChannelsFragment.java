@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,6 +31,8 @@ import tv.starcards.starcardstv.application.data.state.IsLoggedByPacket;
 import tv.starcards.starcardstv.application.ui.adaptors.TvChannelsAdaptor;
 import tv.starcards.starcardstv.application.ui.models.TvChannelListModel;
 import tv.starcards.starcardstv.application.data.channelsdata.ChannelsDataRequest;
+import tv.starcards.starcardstv.application.util.SearchToolbarUi;
+import tv.starcards.starcardstv.application.widgets.CustomEditText;
 import tv.starcards.starcardstv.application.widgets.Fab;
 
 public class ChannelsFragment extends Fragment {
@@ -39,14 +43,15 @@ public class ChannelsFragment extends Fragment {
     public static ArrayList<TvChannelListModel> channelsListArray;
     public static ListView                      channels;
     public static PullToRefreshView             mPullToRefreshView;
+    public static Fab                           fab;
 
     private static final String                 TAG = "ChannelsFragment";
+    public static boolean                       searchIsVisible = false;
 
     private String                              packetId;
     private ChannelsDataRequest                 channelsData;
 
     Resources                                   resources;
-    TextView                                    search;
 
     public ChannelsFragment() {
     }
@@ -67,17 +72,41 @@ public class ChannelsFragment extends Fragment {
         packetId = getArguments().getString("packetId");
         View v = inflater.inflate(R.layout.fragment_channels_activity, container, false);
 
-//        this.getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        MainScreenActivity.search.setVisibility(View.INVISIBLE);
+        MainScreenActivity.searchImage.setVisibility(View.VISIBLE);
 
-        Fab fab = (Fab) v.findViewById(R.id.fab);
+        MainScreenActivity.searchImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.search_image_animation);
+                MainScreenActivity.searchImage.setAnimation(animation);
+                SearchToolbarUi.changeSearchToolbarUI(getActivity(), searchIsVisible);
+            }
+        });
+
+        MainScreenActivity.search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ChannelsData.getInstance().loadChannelsFromDB(DBHelper.CHANNEL_NAME, s);
+            }
+        });
+
+
+        fab = (Fab) v.findViewById(R.id.fab);
         View sheetView = v.findViewById(R.id.fab_sheet);
         View overlay = v.findViewById(R.id.overlay);
         int sheetColor = getResources().getColor(R.color.colorPrimary);
         int fabColor = getResources().getColor(R.color.color_vlc);
 
         // Initialize material sheet FAB
-        materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlay,
-                sheetColor, fabColor);
+        materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlay, sheetColor, fabColor);
         materialSheetFab.setEventListener(new MaterialSheetFabEventListener() {
             @Override
             public void onShowSheet() {
@@ -132,42 +161,6 @@ public class ChannelsFragment extends Fragment {
             ChannelsData.getInstance().loadChannelsFromDB();
         }
 
-//        fab = (FloatingActionButton) v.findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                fab.setImageDrawable(getResources().getDrawable(R.mipmap.channels_filter_visible));
-//                Snackbar.make(view, "Тут будут фильтры по каналам", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//
-//            }
-//        });
-        search = (TextView) v.findViewById(R.id.channels_toolbar_search);
-        search.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if (search.getText().toString().equals("search")) {
-                    search.setText("");
-                }
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                ChannelsData.getInstance().loadChannelsFromDB(DBHelper.CHANNEL_NAME, s);
-            }
-        });
-
-            v.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                search.setText("search");
-            }
-        });
         return v;
     }
 

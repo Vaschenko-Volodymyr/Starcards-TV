@@ -70,22 +70,6 @@ public class Login extends AppCompatActivity {
             }
         });
 
-//        loginButton = (Button) findViewById(R.id.login_button);
-//        loginButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!isNetworkConnected()) {
-//                    new SweetAlertDialog(Login.this, SweetAlertDialog.ERROR_TYPE)
-//                            .setTitleText("Отсутствует подключение к интернету")
-//                            .setContentText("Проверьте включен ли wifi(рекомендуется) или передача мобильных данных и повторите попытку")
-//                            .show();
-//                } else {
-//                    Log.d("Login", "Login button pressed");
-//                    loginUser();
-//                }
-//            }
-//        });
-
         createAccount = (TextView) findViewById(R.id.create_account);
         createAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,6 +124,7 @@ public class Login extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         showWrongDataMessage();
                         Log.d("Login", "Error... " + error);
+                        login.setProgress(0);
                     }
                 }){
             @Override
@@ -185,6 +170,7 @@ public class Login extends AppCompatActivity {
     }
 
     private void setLogged() {
+        MainScreenActivity.justEntered = true;
         UserData.getInstance().setLoggedByLogin();
     }
 }

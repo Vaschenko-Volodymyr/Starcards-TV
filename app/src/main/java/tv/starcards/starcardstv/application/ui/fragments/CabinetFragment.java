@@ -52,6 +52,10 @@ public class CabinetFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_cabinet, container, false);
 
+        MainScreenActivity.search.setVisibility(View.INVISIBLE);
+        MainScreenActivity.searchImage.setVisibility(View.INVISIBLE);
+        MainScreenActivity.toolbarText.setVisibility(View.VISIBLE);
+
         packetData = new PacketDataRequest(getContext(), resources);
 
         packetListArray = new ArrayList<>();
@@ -71,7 +75,8 @@ public class CabinetFragment extends Fragment {
             }
         });
 
-        if (!IsLogged.getInstance().isLogged()) {
+        if ((!IsLogged.getInstance().isLogged() || MainScreenActivity.justEntered)) {
+            MainScreenActivity.justEntered = false;
             MainScreenActivity.pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
             MainScreenActivity.pDialog.setTitleText("Loading");
             MainScreenActivity.pDialog.show();

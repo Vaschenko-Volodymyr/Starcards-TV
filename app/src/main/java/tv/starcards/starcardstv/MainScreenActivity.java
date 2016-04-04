@@ -1,8 +1,10 @@
 package tv.starcards.starcardstv;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.inputmethodservice.Keyboard;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -22,8 +24,12 @@ import android.util.Log;
 
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -68,9 +74,12 @@ import tv.starcards.starcardstv.application.ui.models.TvChannelListModel;
 import tv.starcards.starcardstv.application.ui.vlc.FullscreenVlcPlayer;
 import tv.starcards.starcardstv.application.util.NetWorkState;
 import tv.starcards.starcardstv.application.util.Parser;
+import tv.starcards.starcardstv.application.util.SearchToolbarUi;
 
 public class MainScreenActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static MainScreenActivity instance;
 
     public static NavigationView   navigationView;
 
@@ -79,7 +88,12 @@ public class MainScreenActivity extends AppCompatActivity
     public static TextView         balance;
     public static TextView         bonus;
 
-    public static boolean          justEntered = true;
+    public static Toolbar          toolbar;
+    public static EditText         search;
+    public static ImageView        searchImage;
+    public static TextView         toolbarText;
+
+    public static boolean          justEntered = false;
     public static boolean          firstTimeChannelsLoad = true;
 
     private static final int       CHANNELS_ID = 0;
@@ -94,12 +108,11 @@ public class MainScreenActivity extends AppCompatActivity
     private ViewPagerAdapter       adapter;
     private String                 packetPassword;
     private String                 packetId;
+    private String                 packetTitle;
     private String                 chosenPacketTitle;
-    private TextView               toolbarText;
-    private ChannelsDataRequest    channelsData;
 
     public static SweetAlertDialog pDialog;
-    private NetWorkState state;
+    private NetWorkState           state;
 
 
     @Override
@@ -107,10 +120,14 @@ public class MainScreenActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_screen_activity);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar_toolbar);
+        instance = this;
+
+        toolbar = (Toolbar) findViewById(R.id.app_bar_toolbar);
         setSupportActionBar(toolbar);
 
         toolbarText = (TextView) findViewById(R.id.toolbar_text);
+        search = (EditText) findViewById(R.id.toolbar_search);
+        searchImage = (ImageView) findViewById(R.id.toolbar_search_img);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -129,7 +146,6 @@ public class MainScreenActivity extends AppCompatActivity
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        channelsData = new ChannelsDataRequest(this, packetId, getResources());
 
         UserData.getInstance().initUserData(this);
         PacketData.getInstance().initPacketData(this, getResources());
@@ -218,8 +234,8 @@ public class MainScreenActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (ChannelsFragment.materialSheetFab.isSheetVisible()) {
-            ChannelsFragment.materialSheetFab.hideSheet();
+        } else if (ChannelsFragment.searchIsVisible) {
+            SearchToolbarUi.changeSearchToolbarUI(this, ChannelsFragment.searchIsVisible);
         } else {
             finish();
         }
@@ -231,7 +247,9 @@ public class MainScreenActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.nav_current_packet) {
             if (packetId == null) {
+                Animation animation = AnimationUtils.loadAnimation(this, R.anim.toolbar_text_shacking);
                 toolbarText.setText("Выберите пакет");
+                toolbarText.startAnimation(animation);
                 adapter.clearAll();
                 setupViewPager(viewPager, CABINET_ID);
             } else {

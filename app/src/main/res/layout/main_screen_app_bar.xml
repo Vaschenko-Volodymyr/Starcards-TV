@@ -38,6 +38,32 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"/>
 
+                <tv.starcards.starcardstv.application.widgets.CustomEditText
+                    android:id="@+id/toolbar_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:hint="Начните писать"
+                    android:background="@drawable/apptheme_textfield_disabled_focused_holo_light"
+                    android:textColor="@color/strong_grey"
+                    android:layout_toLeftOf="@+id/toolbar_search_img"
+                    android:layout_toStartOf="@+id/toolbar_search_img">
+
+                    <requestFocus />
+                </tv.starcards.starcardstv.application.widgets.CustomEditText>
+
+                <ImageView
+                    android:id="@+id/toolbar_search_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/channels_toolbar_search_drawable"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:padding="11dp"/>
+
             </RelativeLayout>
 
         </android.support.v7.widget.Toolbar>
