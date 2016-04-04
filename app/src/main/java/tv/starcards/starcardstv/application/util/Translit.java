@@ -46,8 +46,8 @@ public class Translit {
         map.put("ь", "");
         map.put("ы", "y");
         map.put("э", "e");
-        map.put("ю", "iu");
-        map.put("я", "ia");
+        map.put("ю", "ju");
+        map.put("я", "ja");
         return map;
     }
 

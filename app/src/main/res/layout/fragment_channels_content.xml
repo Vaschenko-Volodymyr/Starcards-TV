@@ -9,12 +9,40 @@
     tools:showIn="@layout/fragment_channels_activity"
     android:background="@color/grey">
 
-    <ListView
-        android:id="@+id/tv_channels"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <requestFocus/>
-    </ListView>
+        <ListView
+            android:id="@+id/tv_channels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <requestFocus/>
+        </ListView>
+
+        <ImageView
+            android:id="@+id/channels_not_found_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/not_found"
+            android:layout_below="@+id/channels_not_found_text"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/channels_not_found_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ничего не найдено :("
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+    </RelativeLayout>
+
+
 
 </com.yalantis.phoenix.PullToRefreshView>

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -44,6 +45,8 @@ public class ChannelsFragment extends Fragment {
     public static ListView                      channels;
     public static PullToRefreshView             mPullToRefreshView;
     public static Fab                           fab;
+    public static ImageView                     notFoundImg;
+    public static TextView                      notFoundText;
 
     private static final String                 TAG = "ChannelsFragment";
     public static boolean                       searchIsVisible = false;
@@ -102,6 +105,8 @@ public class ChannelsFragment extends Fragment {
         fab = (Fab) v.findViewById(R.id.fab);
         View sheetView = v.findViewById(R.id.fab_sheet);
         View overlay = v.findViewById(R.id.overlay);
+        notFoundImg = (ImageView) v.findViewById(R.id.channels_not_found_img);
+        notFoundText = (TextView) v.findViewById(R.id.channels_not_found_text);
         int sheetColor = getResources().getColor(R.color.colorPrimary);
         int fabColor = getResources().getColor(R.color.color_vlc);
 

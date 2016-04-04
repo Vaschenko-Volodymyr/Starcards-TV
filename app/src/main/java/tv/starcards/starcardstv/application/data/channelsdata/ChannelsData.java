@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -147,28 +148,41 @@ public class ChannelsData {
     }
 
     public void loadChannelsFromDB(String column, CharSequence condition) {
-
+        Map<Integer, Map<String, String>> channel = new HashMap<>();
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-//        Cursor cursor = database.query(DBHelper.CHANNELS_TABLE, null, null, null, null, null, null);
+        Cursor cursor;
         String query = "SELECT * FROM " + DBHelper.CHANNELS_TABLE + " ";
         if (!column.equals("")) {
             if (column.equals(DBHelper.CHANNEL_NAME)) {
                 condition = Translit.translit(condition.toString());
                 column = DBHelper.CHANNEL_NAME_TRANSLIT;
-                query = query + "WHERE " + column + " LIKE \"%" + condition + "%\"" +
-                                  " OR " + column + " LIKE \"%" + condition + "\"" +
-                                  " OR " + column + " LIKE \"" + condition + "%\"" +
-                                  " OR " + column + " LIKE \"" + condition + "\"" +
-                        " ORDER BY " + DBHelper.CHANNEL_NAME;
+                String advancedQuery;
+                // SQL query goes like : SELECT * FROM column WHERE current_column LIKE '%condition' ORDER BY column
+                advancedQuery = query + "WHERE " + column + " LIKE \"%" + condition + "\" " +
+                                           "OR " + column + " LIKE \"%" + condition + "%\" " +
+                                           "OR " + column + " LIKE \""  + condition + "%\" " +
+                                           "OR " + column + " LIKE \""  + condition + "\" ";
+                cursor = database.rawQuery(advancedQuery, null);
+                Log.w(TAG, "loadChannelsFromDB: SQL LIKE query -> " + advancedQuery);
+                putInMap(channel, cursor);
+            } else {
+                // TODO: other select with LIKE conditions
+                cursor = database.rawQuery(query, null);
+                Log.w(TAG, "loadChannelsFromDB: SQL LIKE query -> " + query);
+                putInMap(channel, cursor);
             }
+        } else {
+            cursor = database.rawQuery(query, null);
+            Log.w(TAG, "loadChannelsFromDB: SQL LIKE query -> " + query);
+            putInMap(channel, cursor);
         }
+        attachChannelDataToRow(channel);
+        cursor.close();
+        database.close();
+    }
 
-        Log.d(TAG, "loadChannelsFromDB: SQL LIKE query -> " + query);
-
-        Cursor cursor = database.rawQuery(query, null);
-        int i = 0;
-
-        Map<Integer, Map<String, String>> channel = new HashMap<>();
+    private void putInMap(Map<Integer, Map<String, String>> channel, Cursor cursor) {
+        int i = channel.size();
         if (cursor.moveToFirst()) {
             do {
                 Map<String, String> info = new HashMap<>();
@@ -190,15 +204,15 @@ public class ChannelsData {
 
                 channel.put(i++, info);
             } while (cursor.moveToNext());
-            attachChannelDataToRow(channel);
         }
-        cursor.close();
-        database.close();
     }
 
     private void attachChannelDataToRow(Map<Integer, Map<String, String>> channel) {
         ChannelsFragment.channelsListArray.clear();
         if (channel.size() >= 1) {
+            ChannelsFragment.notFoundText.setVisibility(View.INVISIBLE);
+            ChannelsFragment.notFoundImg.setVisibility(View.INVISIBLE);
+            ChannelsFragment.channels.setVisibility(View.VISIBLE);
             for (int i = 0; i < channel.size(); i++) {
                 Map<String, String> info = channel.get(i);
                 final TvChannelListModel model = new TvChannelListModel();
@@ -248,7 +262,9 @@ public class ChannelsData {
                 }
             }
         } else {
-            // TODO: show user "No such results"
+            ChannelsFragment.notFoundText.setVisibility(View.VISIBLE);
+            ChannelsFragment.notFoundImg.setVisibility(View.VISIBLE);
+            ChannelsFragment.channels.setVisibility(View.INVISIBLE);
         }
         ChannelsFragment.adapter = new TvChannelsAdaptor(ChannelsFragment.channelsListViewActivity, ChannelsFragment.channelsListArray, resources);
         ChannelsFragment.adapter.updateResults(ChannelsFragment.channelsListArray);
