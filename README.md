@@ -20,7 +20,9 @@ based on starcards [API] (http://dev28.starcards.tv/api-doc/)
 ## Done
 User interface, user data, playing tv channel through VLC player (if installed on davice)
 
-## ToDo
-Detail info about channel and EPG
-Messages fragment
-Contacts fragment
+### ToDo
+
+* Fix bags with rotation
+* Channel info and EPG
+* Message, Contacts and Setting fragments
+* Fullscreen Video Player UI 
