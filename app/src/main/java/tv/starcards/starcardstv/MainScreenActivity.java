@@ -81,7 +81,9 @@ public class MainScreenActivity extends AppCompatActivity
 
     public static MainScreenActivity instance;
 
-    public static NavigationView   navigationView;
+    NavigationView                 navigationView;
+
+    public static SweetAlertDialog pDialog;
 
     public static TextView         email;
     public static TextView         name;
@@ -111,7 +113,6 @@ public class MainScreenActivity extends AppCompatActivity
     private String                 packetTitle;
     private String                 chosenPacketTitle;
 
-    public static SweetAlertDialog pDialog;
     private NetWorkState           state;
 
 
@@ -125,18 +126,18 @@ public class MainScreenActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.app_bar_toolbar);
         setSupportActionBar(toolbar);
 
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
         toolbarText = (TextView) findViewById(R.id.toolbar_text);
         search = (EditText) findViewById(R.id.toolbar_search);
         searchImage = (ImageView) findViewById(R.id.toolbar_search_img);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         View header = navigationView.getHeaderView(0);
         email = (TextView) header.findViewById(R.id.nav_header_user_email);
         email.setEllipsize(TextUtils.TruncateAt.MARQUEE);
@@ -147,13 +148,14 @@ public class MainScreenActivity extends AppCompatActivity
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
+        pDialog = new SweetAlertDialog(MainScreenActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+
+        state = new NetWorkState(this);
+
         UserData.getInstance().initUserData(this);
         PacketData.getInstance().initPacketData(this, getResources());
         ChannelsData.getInstance().initChannelsData(this, getResources());
 
-        state = new NetWorkState(this);
-
-        pDialog = new SweetAlertDialog(MainScreenActivity.this, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
         pDialog.setTitleText("Loading");
     }
@@ -235,7 +237,7 @@ public class MainScreenActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (ChannelsFragment.searchIsVisible) {
-            SearchToolbarUi.changeSearchToolbarUI(this, ChannelsFragment.searchIsVisible);
+            ChannelsFragment.searchIsVisible = SearchToolbarUi.changeSearchToolbarUI(this, ChannelsFragment.searchIsVisible);
         } else {
             finish();
         }

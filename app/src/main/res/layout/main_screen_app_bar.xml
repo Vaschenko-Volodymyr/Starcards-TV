@@ -49,7 +49,9 @@
                     android:background="@drawable/apptheme_textfield_disabled_focused_holo_light"
                     android:textColor="@color/strong_grey"
                     android:layout_toLeftOf="@+id/toolbar_search_img"
-                    android:layout_toStartOf="@+id/toolbar_search_img">
+                    android:layout_toStartOf="@+id/toolbar_search_img"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp">
 
                     <requestFocus />
                 </tv.starcards.starcardstv.application.widgets.CustomEditText>

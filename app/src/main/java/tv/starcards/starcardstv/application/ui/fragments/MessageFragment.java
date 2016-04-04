@@ -24,11 +24,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import tv.starcards.starcardstv.MainScreenActivity;
 import tv.starcards.starcardstv.R;
 import tv.starcards.starcardstv.application.API;
 import tv.starcards.starcardstv.application.ui.adaptors.MessageAdaptor;
 import tv.starcards.starcardstv.application.http.HttpGetWithLoginToken;
 import tv.starcards.starcardstv.application.ui.models.MessagesListModel;
+import tv.starcards.starcardstv.application.util.SearchToolbarUi;
 
 public class MessageFragment extends Fragment {
 
@@ -55,6 +57,8 @@ public class MessageFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_messages, container, false);
+
+        SearchToolbarUi.resetToolbar(getActivity());
 
         messages = (ListView) v.findViewById(R.id.messames_container);
 

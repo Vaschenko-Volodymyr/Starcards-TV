@@ -13,8 +13,13 @@ based on starcards [API] (http://dev28.starcards.tv/api-doc/)
 
 *Application is running on test server.*
 
+![Starcards Screenshot](/Screenshots/login.png?raw=true)
+![Starcards Screenshot](/Screenshots/loading_login.png?raw=true)
+
 ## Done
 User interface, user data, playing tv channel through VLC player (if installed on davice)
 
-## ToDO
-Implement built-in video player based on VLC SDK 
+## ToDo
+Detail info about channel and EPG
+Messages fragment
+Contacts fragment

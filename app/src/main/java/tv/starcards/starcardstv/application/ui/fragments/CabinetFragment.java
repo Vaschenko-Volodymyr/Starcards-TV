@@ -22,6 +22,7 @@ import tv.starcards.starcardstv.application.data.state.IsLogged;
 import tv.starcards.starcardstv.application.ui.adaptors.PacketAdaptor;
 import tv.starcards.starcardstv.application.data.packetdata.PacketDataRequest;
 import tv.starcards.starcardstv.application.ui.models.PacketListModel;
+import tv.starcards.starcardstv.application.util.SearchToolbarUi;
 
 public class CabinetFragment extends Fragment {
 
@@ -52,9 +53,7 @@ public class CabinetFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_cabinet, container, false);
 
-        MainScreenActivity.search.setVisibility(View.INVISIBLE);
-        MainScreenActivity.searchImage.setVisibility(View.INVISIBLE);
-        MainScreenActivity.toolbarText.setVisibility(View.VISIBLE);
+        SearchToolbarUi.resetToolbar(getActivity());
 
         packetData = new PacketDataRequest(getContext(), resources);
 

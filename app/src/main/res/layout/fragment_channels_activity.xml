@@ -10,6 +10,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/channels_not_found_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/channels_not_found_text"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/not_found" />
+
+        <TextView
+            android:id="@+id/channels_not_found_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:text="Ничего не найдено :("
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp" />
+
         <tv.starcards.starcardstv.application.widgets.Fab
             android:id="@+id/fab"
             android:layout_width="wrap_content"

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import tv.starcards.starcardstv.R;
+import tv.starcards.starcardstv.application.util.SearchToolbarUi;
 
 public class SettingsFragment extends Fragment {
 
@@ -19,6 +20,8 @@ public class SettingsFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_settings, container, false);
+
+        SearchToolbarUi.resetToolbar(getActivity());
 
         return v;
     }

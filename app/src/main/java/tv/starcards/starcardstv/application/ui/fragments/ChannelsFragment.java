@@ -66,41 +66,11 @@ public class ChannelsFragment extends Fragment {
         resources = getResources();
         adapter = new TvChannelsAdaptor(channelsListViewActivity, channelsListArray, resources);
         adapter = null;
-
-
-
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         packetId = getArguments().getString("packetId");
         View v = inflater.inflate(R.layout.fragment_channels_activity, container, false);
-
-        MainScreenActivity.search.setVisibility(View.INVISIBLE);
-        MainScreenActivity.searchImage.setVisibility(View.VISIBLE);
-
-        MainScreenActivity.searchImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.search_image_animation);
-                MainScreenActivity.searchImage.setAnimation(animation);
-                SearchToolbarUi.changeSearchToolbarUI(getActivity(), searchIsVisible);
-            }
-        });
-
-        MainScreenActivity.search.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                ChannelsData.getInstance().loadChannelsFromDB(DBHelper.CHANNEL_NAME, s);
-            }
-        });
-
 
         fab = (Fab) v.findViewById(R.id.fab);
         View sheetView = v.findViewById(R.id.fab_sheet);
@@ -108,10 +78,42 @@ public class ChannelsFragment extends Fragment {
         notFoundImg = (ImageView) v.findViewById(R.id.channels_not_found_img);
         notFoundText = (TextView) v.findViewById(R.id.channels_not_found_text);
         int sheetColor = getResources().getColor(R.color.colorPrimary);
-        int fabColor = getResources().getColor(R.color.color_vlc);
+        int fabColor = getResources().getColor(R.color.colorPrimaryDark);
+        materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlay, sheetColor, fabColor);
+        channelsData = new ChannelsDataRequest(getContext(), packetId, resources);
+        channelsListArray = new ArrayList<>();
+        channels = (ListView) v.findViewById(R.id.tv_channels);
+        mPullToRefreshView = (PullToRefreshView) v.findViewById(R.id.channels_refresh_layout);
+
+        SearchToolbarUi.resetToolbar(getActivity());
+        MainScreenActivity.searchImage.setVisibility(View.VISIBLE);
+
+        MainScreenActivity.searchImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.search_image_animation);
+                MainScreenActivity.searchImage.setAnimation(animation);
+                searchIsVisible = SearchToolbarUi.changeSearchToolbarUI(getActivity(), searchIsVisible);
+            }
+        });
+
+        MainScreenActivity.search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ChannelsData.getInstance().loadChannelsFromDB(DBHelper.CHANNEL_NAME, s);
+            }
+        });
 
         // Initialize material sheet FAB
-        materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlay, sheetColor, fabColor);
         materialSheetFab.setEventListener(new MaterialSheetFabEventListener() {
             @Override
             public void onShowSheet() {
@@ -133,14 +135,8 @@ public class ChannelsFragment extends Fragment {
             }
         });
 
-        channelsData = new ChannelsDataRequest(getContext(), packetId, resources);
-
         Log.w(TAG, "packetID = " + packetId);
 
-        channelsListArray = new ArrayList<>();
-        channels = (ListView) v.findViewById(R.id.tv_channels);
-
-        mPullToRefreshView = (PullToRefreshView) v.findViewById(R.id.channels_refresh_layout);
         mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
             @Override
             public void onRefresh() {
