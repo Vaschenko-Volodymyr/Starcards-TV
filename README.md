@@ -15,6 +15,7 @@ based on starcards [API] (http://dev28.starcards.tv/api-doc/)
 
 ![Starcards Screenshot](/Screenshots/login.png?raw=true)
 ![Starcards Screenshot](/Screenshots/loading_login.png?raw=true)
+
 *more screenshots soon*
 
 ## Done
@@ -22,6 +23,7 @@ User interface, user data, playing tv channel through VLC player (if installed o
 
 ### ToDo
 
+* Refresh tokens
 * Fix bags with rotation
 * Channel info and EPG
 * Message, Contacts and Setting fragments
