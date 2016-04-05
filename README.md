@@ -35,7 +35,7 @@ based on starcards [API] (http://dev28.starcards.tv/api-doc/)
 * More screenshoots soon *
 
 ## Done
-User interface, user data, playing tv channel through VLC player (if installed on davice)
+User interface, user data, playing tv channel through VLC player (if installed on device)
 
 ### ToDo
 
