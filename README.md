@@ -13,10 +13,26 @@ based on starcards [API] (http://dev28.starcards.tv/api-doc/)
 
 *Application is running on test server.*
 
-![Starcards Screenshot](/Screenshots/login.png?raw=true)
-![Starcards Screenshot](/Screenshots/loading_login.png?raw=true)
+![Starcards Screenshot](/Screenshots/login_success.png?raw=true)
+![Starcards Screenshot](/Screenshots/main.png?raw=true)
 
-*more screenshots soon*
+
+=========================
+
+****
+
+#### *Cabinet*####
+![Starcards Screenshot](/Screenshots/cabinet.png?raw=true)
+
+=========================
+
+****
+
+#### *Channels*####
+![Starcards Screenshot](/Screenshots/channels.png?raw=true)
+![Starcards Screenshot](/Screenshots/channels_search_action.png?raw=true)
+
+* More screenshoots soon *
 
 ## Done
 User interface, user data, playing tv channel through VLC player (if installed on davice)
