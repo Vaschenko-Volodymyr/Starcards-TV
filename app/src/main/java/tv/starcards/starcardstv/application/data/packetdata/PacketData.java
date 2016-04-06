@@ -207,7 +207,7 @@ public class PacketData {
                 CabinetFragment.packetListArray.add(model);
                 i++;
             }
-            CabinetFragment.adapter = new PacketAdaptor(CabinetFragment.packetListViewActivity, CabinetFragment.packetListArray, resources);
+            CabinetFragment.adapter = new PacketAdaptor(CabinetFragment.instance, CabinetFragment.packetListArray, resources);
             CabinetFragment.packets.setAdapter(CabinetFragment.adapter);
             listViewConverter.setListViewHeightBasedOnChildren(CabinetFragment.packets);
 //            MainScreenActivity.pDialog.dismiss();

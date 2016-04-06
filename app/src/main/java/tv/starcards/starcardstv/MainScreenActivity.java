@@ -81,7 +81,7 @@ public class MainScreenActivity extends AppCompatActivity
 
     public static MainScreenActivity instance;
 
-    NavigationView                 navigationView;
+    public static NavigationView   navigationView;
 
     public static SweetAlertDialog pDialog;
 
@@ -96,7 +96,6 @@ public class MainScreenActivity extends AppCompatActivity
     public static TextView         toolbarText;
 
     public static boolean          justEntered = false;
-    public static boolean          firstTimeChannelsLoad = true;
 
     private static final int       CHANNELS_ID = 0;
     private static final int       CABINET_ID = 1;
@@ -320,83 +319,6 @@ public class MainScreenActivity extends AppCompatActivity
         viewPager.setAdapter(adapter);
     }
 
-    public void onPacketsItemClick(int mPosition) {
-        PacketListModel tempValues = CabinetFragment.packetListArray.get(mPosition);
-        chosenPacketTitle = tempValues.getName();
-        packetId = PacketData.getInstance().getPacketData(chosenPacketTitle, DBHelper.PACKET_ID);
-        packetPassword = PacketData.getInstance().getPacketData(chosenPacketTitle, DBHelper.PACKET_PASSWORD);
-        firstTimeChannelsLoad = true;
-        loginInPacket();
-    }
-
-    public void onPacketItemLongClick(int position) {
-        PacketListModel values = CabinetFragment.packetListArray.get(position);
-        Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
-        v.vibrate(100);
-        new SweetAlertDialog(this)
-                .setTitleText(values.getName())
-                .setContentText("Пакет доступен до\n" + values.getDate() + "\n\n"
-                        + "Для доступа к пакету используйте \n"
-                        + "Id пакета - " + values.getId() + "\n"
-                        + "Пароль пакета - " + values.getPassword())
-                .show();
-    }
-
-    private void loginInPacket() {
-        String packetLoginUrl = "http://api28.starcards.tv/user/token";
-        final String contentType = "Content-Type";
-        final String contentTypeParameter = "application/x-www-form-urlencoded";
-        final String type = "grant_type";
-        final String password = "password";
-        final String keyUsername = "username";
-        final String keyPassword = "password";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, packetLoginUrl,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.w(TAG, "loginInPacket(): Server is reachable. " + response);
-                        if (response.contains("ERROR")) {
-                            Log.e(TAG, "loginInPacket(): Access denied. See details: " + response);
-                        } else if (response.contains("access_token")) {
-                            Log.d(TAG, "loginInPacket(): Access accepted. See details: " + response);
-                            setPacketTokensAndShowChannels(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }) {
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put(contentType, contentTypeParameter);
-                return headers;
-            }
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put(type, password);
-                params.put(keyUsername, packetId);
-                params.put(keyPassword, packetPassword);
-                return params;
-            }
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-    }
-
-    private void setPacketTokensAndShowChannels(String response) {
-        PacketData.getInstance().setPacketTokens(response);
-        PacketData.getInstance().setLoggedByPacket();
-        navigationView.getMenu().getItem(0).setChecked(true);
-        onNavigationItemSelected(navigationView.getMenu().getItem(0));
-    }
-
     public void onStarcardsPlayerClick(int position) {
         TvChannelListModel values = ChannelsFragment.channelsListArray.get(position);
         Intent intent = new Intent(this, FullscreenVlcPlayer.class);
@@ -462,48 +384,6 @@ public class MainScreenActivity extends AppCompatActivity
         intent.setPackage("org.videolan.vlc");
         intent.setDataAndType(Uri.parse(url), "video/*");
         startActivity(intent);
-    }
-
-    public void onChannelItemLongClick(int position) {
-        TvChannelListModel value = ChannelsFragment.channelsListArray.get(position);
-        Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
-        v.vibrate(100);
-        SweetAlertDialog dialog = new SweetAlertDialog(MainScreenActivity.this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
-                String title = value.getTitle();
-                if (value.isFavorite()) {
-                    title = title + "(Ваш любимый)";
-                }
-                dialog.setTitleText(title);
-                String message = "Канал номер " + value.getNumber() + ".\n"
-                        + "Жанр канала - " + value.getGenre() + ".\n";
-
-                if (value.isCensored()) {
-                    message = message + "Канал для взрослых.\n";
-                } else {
-                    message = message + "Канал без возрастных ограничений.\n";
-                }
-
-                if ((value.isArchivable())) {
-                    message = message + "Канал архивируется.\n";
-                } else {
-                    message = message + ".Канал не архивируется\n";
-                }
-
-                if (value.isAvailable()) {
-                    message = message + "Канал доступен.\n";
-                } else {
-                    message = message + "Канал временно недоступен.\n";
-                }
-                dialog.setContentText(message);
-                dialog.setCustomImage(getResources().getDrawable(R.drawable.toolbar_back_arrow));
-                dialog.show();
-        TextView tv = (TextView) dialog.findViewById(cn.pedant.SweetAlert.R.id.content_text);
-        tv.setGravity(Gravity.START);
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-        ImageView img = (ImageView) dialog.findViewById(cn.pedant.SweetAlert.R.id.custom_image);
-        img.setMinimumWidth(50);
-        img.setMinimumHeight(50);
-        Picasso.with(MainScreenActivity.this).load(value.getLogo()).into(img);
     }
 
     private void showNetworkStateError() {

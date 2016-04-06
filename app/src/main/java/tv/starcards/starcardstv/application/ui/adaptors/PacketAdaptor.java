@@ -3,6 +3,7 @@ package tv.starcards.starcardstv.application.ui.adaptors;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,21 +15,22 @@ import java.util.ArrayList;
 
 import tv.starcards.starcardstv.MainScreenActivity;
 import tv.starcards.starcardstv.R;
+import tv.starcards.starcardstv.application.ui.fragments.CabinetFragment;
 import tv.starcards.starcardstv.application.ui.models.PacketListModel;
 
 public class PacketAdaptor extends BaseAdapter implements View.OnClickListener{
 
-    private Activity activity;
+    private Fragment fragment;
     private ArrayList data;
     private static LayoutInflater inflater = null;
     public Resources resources;
     PacketListModel model = null;
 
-    public PacketAdaptor(Activity activity, ArrayList data, Resources resources){
-        this.activity = activity;
+    public PacketAdaptor(Fragment fragment, ArrayList data, Resources resources){
+        this.fragment = fragment;
         this.data = data;
         this.resources = resources;
-        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = (LayoutInflater) fragment.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public int getCount() {
@@ -94,7 +96,7 @@ public class PacketAdaptor extends BaseAdapter implements View.OnClickListener{
 
         @Override
         public void onClick(View arg0) {
-            MainScreenActivity container = (MainScreenActivity)activity;
+            CabinetFragment container = (CabinetFragment) fragment;
             container.onPacketsItemClick(position);
         }
     }
@@ -106,7 +108,7 @@ public class PacketAdaptor extends BaseAdapter implements View.OnClickListener{
 
         @Override
         public boolean onLongClick(View v) {
-            MainScreenActivity container = (MainScreenActivity) activity;
+            CabinetFragment container = (CabinetFragment) fragment;
             container.onPacketItemLongClick(position);
             return false;
         }

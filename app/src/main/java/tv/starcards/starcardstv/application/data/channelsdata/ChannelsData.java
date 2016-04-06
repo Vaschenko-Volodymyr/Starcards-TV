@@ -266,7 +266,7 @@ public class ChannelsData {
             ChannelsFragment.notFoundImg.setVisibility(View.VISIBLE);
             ChannelsFragment.channels.setVisibility(View.INVISIBLE);
         }
-        ChannelsFragment.adapter = new TvChannelsAdaptor(ChannelsFragment.channelsListViewActivity, ChannelsFragment.channelsListArray, resources);
+        ChannelsFragment.adapter = new TvChannelsAdaptor(ChannelsFragment.instance, ChannelsFragment.channelsListArray, resources);
         ChannelsFragment.adapter.updateResults(ChannelsFragment.channelsListArray);
         ChannelsFragment.channels.setAdapter(ChannelsFragment.adapter);
         converter.setListViewHeightBasedOnChildren(ChannelsFragment.channels);

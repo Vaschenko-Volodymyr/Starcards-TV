@@ -3,6 +3,7 @@ package tv.starcards.starcardstv.application.ui.adaptors;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,13 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 import tv.starcards.starcardstv.MainScreenActivity;
 import tv.starcards.starcardstv.R;
+import tv.starcards.starcardstv.application.ui.fragments.CabinetFragment;
+import tv.starcards.starcardstv.application.ui.fragments.ChannelsFragment;
 import tv.starcards.starcardstv.application.ui.models.TvChannelListModel;
 
 public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListener {
 
-    private Activity              activity;
+    private Fragment              fragment;
     private ArrayList             data;
     private static LayoutInflater inflater = null;
     public Resources              resources;
@@ -32,11 +35,11 @@ public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListen
     private String packetId;
     private String channelId;
 
-    public TvChannelsAdaptor(Activity activity, ArrayList data, Resources resources){
-        this.activity = activity;
+    public TvChannelsAdaptor(Fragment fragment, ArrayList data, Resources resources){
+        this.fragment = fragment;
         this.data = data;
         this.resources = resources;
-        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = (LayoutInflater) fragment.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
     }
 
@@ -112,7 +115,7 @@ public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListen
                 }
             }
 
-            Picasso.with(activity.getApplicationContext()).load(model.getLogo()).into(holder.img);
+            Picasso.with(fragment.getActivity().getApplicationContext()).load(model.getLogo()).into(holder.img);
 
             view.setOnLongClickListener(new OnLongItemClickListener(position));
             this.packetId = model.getPacketId();
@@ -169,7 +172,7 @@ public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListen
 
         @Override
         public boolean onLongClick(View v) {
-            MainScreenActivity container = (MainScreenActivity) activity;
+            ChannelsFragment container = (ChannelsFragment) fragment;
             container.onChannelItemLongClick(position);
             return false;
         }

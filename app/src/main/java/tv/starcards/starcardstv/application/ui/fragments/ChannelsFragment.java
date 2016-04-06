@@ -1,13 +1,17 @@
 package tv.starcards.starcardstv.application.ui.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +23,12 @@ import android.widget.TextView;
 
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener;
+import com.squareup.picasso.Picasso;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import java.util.ArrayList;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import tv.starcards.starcardstv.MainScreenActivity;
 import tv.starcards.starcardstv.R;
 import tv.starcards.starcardstv.application.data.channelsdata.ChannelsData;
@@ -41,10 +47,12 @@ public class ChannelsFragment extends Fragment {
     public static Activity                      channelsListViewActivity = null;
     public static ArrayList<TvChannelListModel> channelsListArray;
     public static ListView                      channels;
-    public static PullToRefreshView mChannelsPullToRefreshView;
+    public static PullToRefreshView             mChannelsPullToRefreshView;
     public static Fab                           fab;
     public static ImageView                     notFoundImg;
     public static TextView                      notFoundText;
+
+    public static ChannelsFragment              instance;
 
     private static final String                 TAG = "ChannelsFragment";
     public static boolean                       searchIsVisible = false;
@@ -59,10 +67,10 @@ public class ChannelsFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-
+        instance = this;
         channelsListViewActivity = getActivity();
         resources = getResources();
-        adapter = new TvChannelsAdaptor(channelsListViewActivity, channelsListArray, resources);
+        adapter = new TvChannelsAdaptor(this, channelsListArray, resources);
         adapter = null;
     }
 
@@ -167,5 +175,47 @@ public class ChannelsFragment extends Fragment {
     private void requestChannelsData() {
         channelsListArray.clear();
         channelsData.fillChannels();
+    }
+
+    public void onChannelItemLongClick(int position) {
+        TvChannelListModel value = ChannelsFragment.channelsListArray.get(position);
+        Vibrator v = (Vibrator) this.getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(100);
+        SweetAlertDialog dialog = new SweetAlertDialog(this.getActivity(), SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+        String title = value.getTitle();
+        if (value.isFavorite()) {
+            title = title + "(Ваш любимый)";
+        }
+        dialog.setTitleText(title);
+        String message = "Канал номер " + value.getNumber() + ".\n"
+                + "Жанр канала - " + value.getGenre() + ".\n";
+
+        if (value.isCensored()) {
+            message = message + "Канал для взрослых.\n";
+        } else {
+            message = message + "Канал без возрастных ограничений.\n";
+        }
+
+        if ((value.isArchivable())) {
+            message = message + "Канал архивируется.\n";
+        } else {
+            message = message + ".Канал не архивируется\n";
+        }
+
+        if (value.isAvailable()) {
+            message = message + "Канал доступен.\n";
+        } else {
+            message = message + "Канал временно недоступен.\n";
+        }
+        dialog.setContentText(message);
+        dialog.setCustomImage(getResources().getDrawable(R.drawable.toolbar_back_arrow));
+        dialog.show();
+        TextView tv = (TextView) dialog.findViewById(cn.pedant.SweetAlert.R.id.content_text);
+        tv.setGravity(Gravity.START);
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+        ImageView img = (ImageView) dialog.findViewById(cn.pedant.SweetAlert.R.id.custom_image);
+        img.setMinimumWidth(50);
+        img.setMinimumHeight(50);
+        Picasso.with(this.getActivity()).load(value.getLogo()).into(img);
     }
 }
