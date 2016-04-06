@@ -80,9 +80,7 @@ public class MainScreenActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static MainScreenActivity instance;
-
     public static NavigationView   navigationView;
-
     public static SweetAlertDialog pDialog;
 
     public static TextView         email;
@@ -109,8 +107,6 @@ public class MainScreenActivity extends AppCompatActivity
     private ViewPagerAdapter       adapter;
     private String                 packetPassword;
     private String                 packetId;
-    private String                 packetTitle;
-    private String                 chosenPacketTitle;
 
     private NetWorkState           state;
 
@@ -317,73 +313,6 @@ public class MainScreenActivity extends AppCompatActivity
         }
         adapter.addFragment(fragment, "FRAGMENT");
         viewPager.setAdapter(adapter);
-    }
-
-    public void onStarcardsPlayerClick(int position) {
-        TvChannelListModel values = ChannelsFragment.channelsListArray.get(position);
-        Intent intent = new Intent(this, FullscreenVlcPlayer.class);
-        intent.putExtra("id", values.getId());
-//        intent.putExtra("name", values.getTitle());
-//        intent.putExtra("genre", values.getGenre());
-//        intent.putExtra("number", values.getNumber());
-//        intent.putExtra("ico", values.getLogo());
-//        intent.putExtra("censored", String.valueOf(values.isCensored()));
-//        intent.putExtra("available", String.valueOf(values.isAvailable()));
-//        intent.putExtra("archivable", String.valueOf(values.isArchivable()));
-//        intent.putExtra("favorite", String.valueOf(values.isFavorite()));
-        intent.putExtra("url", values.getUrl());
-        intent.putExtra("packetId", packetId);
-        startActivity(intent);
-    }
-
-    public void onVLCPlayerClick(int position) {
-        TvChannelListModel values = ChannelsFragment.channelsListArray.get(position);
-        String url = API.PACKETS_SUMMARY + "/" + packetId + API.TV_CHANNELS + "/" + values.getId() + API.LINK;
-        if (values.getUrl().equals("false")) {
-            requestUrl(url);
-        } else {
-            goToVLCPlayer(values.getUrl());
-        }
-    }
-
-    private void requestUrl(String url) {
-        Log.d(TAG, "Request URL = " + url);
-        RequestQueue rq = Volley.newRequestQueue(this);
-        JsonObjectRequest req = new HttpGetWithPacketToken(Request.Method.GET, url , null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-
-                            handleUrl(response);
-                        } catch (JSONException e) {
-                            Log.w("JSONException", "wrong parsing in fillPackets");
-                        }
-                        Log.w("TV LINK", response.toString());
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("Packet request error", error.toString());
-                VolleyLog.e("Error: ", error.getMessage());
-            }
-        });
-        rq.add(req);
-    }
-
-    private void handleUrl(JSONObject response) throws JSONException {
-        Parser parser = new Parser();
-        String result = response.getString("results");
-        String url = parser.parse(result, "url");
-        Log.w("url", url);
-        goToVLCPlayer(url);
-    }
-
-    private void goToVLCPlayer(String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setPackage("org.videolan.vlc");
-        intent.setDataAndType(Uri.parse(url), "video/*");
-        startActivity(intent);
     }
 
     private void showNetworkStateError() {

@@ -2,8 +2,10 @@ package tv.starcards.starcardstv.application.ui.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
@@ -21,22 +23,36 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener;
 import com.squareup.picasso.Picasso;
 import com.yalantis.phoenix.PullToRefreshView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import tv.starcards.starcardstv.MainScreenActivity;
 import tv.starcards.starcardstv.R;
+import tv.starcards.starcardstv.application.API;
 import tv.starcards.starcardstv.application.data.channelsdata.ChannelsData;
 import tv.starcards.starcardstv.application.data.db.DBHelper;
 import tv.starcards.starcardstv.application.data.state.IsLoggedByPacket;
+import tv.starcards.starcardstv.application.http.HttpGetWithPacketToken;
 import tv.starcards.starcardstv.application.ui.adaptors.TvChannelsAdaptor;
 import tv.starcards.starcardstv.application.ui.models.TvChannelListModel;
 import tv.starcards.starcardstv.application.data.channelsdata.ChannelsDataRequest;
+import tv.starcards.starcardstv.application.ui.vlc.FullscreenVlcPlayer;
+import tv.starcards.starcardstv.application.util.Parser;
 import tv.starcards.starcardstv.application.util.SearchToolbarUi;
 import tv.starcards.starcardstv.application.widgets.Fab;
 
@@ -217,5 +233,72 @@ public class ChannelsFragment extends Fragment {
         img.setMinimumWidth(50);
         img.setMinimumHeight(50);
         Picasso.with(this.getActivity()).load(value.getLogo()).into(img);
+    }
+
+    public void onStarcardsPlayerClick(int position) {
+        TvChannelListModel values = ChannelsFragment.channelsListArray.get(position);
+        Intent intent = new Intent(this.getContext(), FullscreenVlcPlayer.class);
+        intent.putExtra("id", values.getId());
+//        intent.putExtra("name", values.getTitle());
+//        intent.putExtra("genre", values.getGenre());
+//        intent.putExtra("number", values.getNumber());
+//        intent.putExtra("ico", values.getLogo());
+//        intent.putExtra("censored", String.valueOf(values.isCensored()));
+//        intent.putExtra("available", String.valueOf(values.isAvailable()));
+//        intent.putExtra("archivable", String.valueOf(values.isArchivable()));
+//        intent.putExtra("favorite", String.valueOf(values.isFavorite()));
+        intent.putExtra("url", values.getUrl());
+        intent.putExtra("packetId", packetId);
+        startActivity(intent);
+    }
+
+    public void onVLCPlayerClick(int position) {
+        TvChannelListModel values = ChannelsFragment.channelsListArray.get(position);
+        String url = API.PACKETS_SUMMARY + "/" + packetId + API.TV_CHANNELS + "/" + values.getId() + API.LINK;
+        if (values.getUrl().equals("false")) {
+            requestUrl(url);
+        } else {
+            goToVLCPlayer(values.getUrl());
+        }
+    }
+
+    private void requestUrl(String url) {
+        Log.d(TAG, "Request URL = " + url);
+        RequestQueue rq = Volley.newRequestQueue(getContext());
+        JsonObjectRequest req = new HttpGetWithPacketToken(Request.Method.GET, url , null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            handleUrl(response);
+                        } catch (JSONException e) {
+                            Log.w("JSONException", "wrong parsing in fillPackets");
+                        }
+                        Log.w("TV LINK", response.toString());
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Packet request error", error.toString());
+                VolleyLog.e("Error: ", error.getMessage());
+            }
+        });
+        rq.add(req);
+    }
+
+    private void handleUrl(JSONObject response) throws JSONException {
+        Parser parser = new Parser();
+        String result = response.getString("results");
+        String url = parser.parse(result, "url");
+        Log.w("url", url);
+        goToVLCPlayer(url);
+    }
+
+    private void goToVLCPlayer(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setPackage("org.videolan.vlc");
+        intent.setDataAndType(Uri.parse(url), "video/*");
+        startActivity(intent);
     }
 }

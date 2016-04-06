@@ -1,6 +1,5 @@
 package tv.starcards.starcardstv.application.ui.adaptors;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.v4.app.Fragment;
@@ -8,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,9 +15,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import tv.starcards.starcardstv.MainScreenActivity;
 import tv.starcards.starcardstv.R;
-import tv.starcards.starcardstv.application.ui.fragments.CabinetFragment;
 import tv.starcards.starcardstv.application.ui.fragments.ChannelsFragment;
 import tv.starcards.starcardstv.application.ui.models.TvChannelListModel;
 
@@ -135,33 +131,33 @@ public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListen
 
     }
 
-//    private class OnStarcardsPlayerClickListener implements View.OnClickListener {
-//        private int position;
-//
-//        OnStarcardsPlayerClickListener(int position){
-//            this.position = position;
-//        }
-//
-//        @Override
-//        public void onClick(View arg0) {
-//            MainScreenActivity container = (MainScreenActivity) activity;
-//            container.onStarcardsPlayerClick(position);
-//        }
-//    }
-//
-//    private class OnVLCPlayerClickListener implements View.OnClickListener {
-//        private int position;
-//
-//        OnVLCPlayerClickListener(int position){
-//            this.position = position;
-//        }
-//
-//        @Override
-//        public void onClick(View arg0) {
-//            MainScreenActivity container = (MainScreenActivity) activity;
-//            container.onVLCPlayerClick(position);
-//        }
-//    }
+    private class OnStarcardsPlayerClickListener implements View.OnClickListener {
+        private int position;
+
+        OnStarcardsPlayerClickListener(int position){
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View arg0) {
+            ChannelsFragment container = (ChannelsFragment) fragment;
+            container.onStarcardsPlayerClick(position);
+        }
+    }
+
+    private class OnVLCPlayerClickListener implements View.OnClickListener {
+        private int position;
+
+        OnVLCPlayerClickListener(int position){
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View arg0) {
+            ChannelsFragment container = (ChannelsFragment) fragment;
+            container.onVLCPlayerClick(position);
+        }
+    }
 
     private class OnLongItemClickListener implements View.OnLongClickListener {
         private int position;
