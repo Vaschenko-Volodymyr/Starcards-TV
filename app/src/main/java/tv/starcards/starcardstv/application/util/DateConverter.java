@@ -2,7 +2,7 @@ package tv.starcards.starcardstv.application.util;
 
 public class DateConverter {
 
-    public String timestampToDate(String date) {
+    public static String timestampToDate(String date) {
         String result = "";
         result = result + date.substring(8, 10) + " ";
 

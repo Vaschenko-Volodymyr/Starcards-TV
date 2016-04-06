@@ -30,12 +30,11 @@ import tv.starcards.starcardstv.application.util.Parser;
 
 public class PacketData {
 
-    private static final String TAG = "PacketData";
+    private static final String TAG = PacketData.class.toString();
     private static PacketData ourInstance = new PacketData();
 
     private DBHelper dbHelper;
     private Parser parser;
-    private DateConverter dateConverter;
     private ListViewConverter listViewConverter;
 
     private Resources resources;
@@ -53,7 +52,6 @@ public class PacketData {
         this.resources = resources;
         dbHelper = new DBHelper(context);
         parser = new Parser();
-        dateConverter = new DateConverter();
         listViewConverter = new ListViewConverter();
     }
 
@@ -203,7 +201,7 @@ public class PacketData {
 
                 model.setId(cursor.getString(id));
                 model.setName(cursor.getString(name));
-                model.setDate(dateConverter.timestampToDate(new Date(Long.parseLong(cursor.getString(dateEnd)) * 1000).toString()));
+                model.setDate(DateConverter.timestampToDate(new Date(Long.parseLong(cursor.getString(dateEnd)) * 1000).toString()));
                 model.setPassword(cursor.getString(password));
                 model.setStatus(cursor.getColumnName(status));
                 CabinetFragment.packetListArray.add(model);
@@ -212,8 +210,7 @@ public class PacketData {
             CabinetFragment.adapter = new PacketAdaptor(CabinetFragment.packetListViewActivity, CabinetFragment.packetListArray, resources);
             CabinetFragment.packets.setAdapter(CabinetFragment.adapter);
             listViewConverter.setListViewHeightBasedOnChildren(CabinetFragment.packets);
-            CabinetFragment.mPullToRefreshView.setRefreshing(false);
-            MainScreenActivity.pDialog.dismiss();
+//            MainScreenActivity.pDialog.dismiss();
         }
 
         cursor.close();

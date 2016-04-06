@@ -17,7 +17,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.dd.processbutton.iml.ActionProcessButton;
-import com.dd.processbutton.iml.SubmitProcessButton;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +24,7 @@ import java.util.Map;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import tv.starcards.starcardstv.application.API;
 import tv.starcards.starcardstv.application.data.userdata.UserData;
-import tv.starcards.starcardstv.application.data.userdata.UserInfoRequest;
+import tv.starcards.starcardstv.application.http.GetBearerLogin;
 import tv.starcards.starcardstv.application.util.NetWorkState;
 
 public class Login extends AppCompatActivity {
@@ -40,10 +39,15 @@ public class Login extends AppCompatActivity {
     TextView createAccount, forgotPassword;
     ActionProcessButton login;
 
+    Thread main;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
+
+
+        main = Thread.currentThread();
 
         etLogin = (EditText) findViewById(R.id.login_field);
         etPassword = (EditText) findViewById(R.id.password_field);
@@ -95,6 +99,8 @@ public class Login extends AppCompatActivity {
         final String username = etLogin.getText().toString().trim();
         final String password = etPassword.getText().toString();
 
+        Thread main = Thread.currentThread();
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, API.AUTH,
                 new Response.Listener<String>() {
                     @Override
@@ -110,8 +116,8 @@ public class Login extends AppCompatActivity {
                             saveTokensToTheDB(response);
                             saveUserDataToTheDB();
                             setLogged();
-                            UserInfoRequest request = new UserInfoRequest(Login.this);
-                            request.doRequest();
+                            GetBearerLogin request = new GetBearerLogin(Login.this);
+                            request.doRequest(GetBearerLogin.USER_INFO_REQUEST);
                             login.setProgress(100);
                             Intent intent = new Intent(getApplicationContext(), MainScreenActivity.class);
                             startActivity(intent);

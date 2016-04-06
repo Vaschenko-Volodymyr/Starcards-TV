@@ -10,8 +10,8 @@ import java.util.Map;
 
 import tv.starcards.starcardstv.application.data.tokens.LoginAccessToken;
 
-public class HttpGetWithLoginToken extends JsonObjectRequest {
-    public HttpGetWithLoginToken(int method, String url, JSONObject j, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+public class GetWithLoginToken extends JsonObjectRequest {
+    public GetWithLoginToken(int method, String url, JSONObject j, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         super(method, url, j, listener, errorListener);
 
     }

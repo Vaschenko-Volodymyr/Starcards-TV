@@ -1,6 +1,6 @@
 package tv.starcards.starcardstv.application.data.userdata;
 
-import android.content.ContentValues;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,9 +8,7 @@ import android.util.Log;
 
 import tv.starcards.starcardstv.MainScreenActivity;
 import tv.starcards.starcardstv.application.data.state.IsLogged;
-import tv.starcards.starcardstv.application.data.state.IsLoggedByPacket;
 import tv.starcards.starcardstv.application.data.db.DBHelper;
-import tv.starcards.starcardstv.application.exceptions.NoDataException;
 import tv.starcards.starcardstv.application.data.tokens.LoginAccessToken;
 import tv.starcards.starcardstv.application.data.tokens.PacketAccessToken;
 import tv.starcards.starcardstv.application.data.tokens.PacketRefreshToken;
@@ -84,7 +82,7 @@ public class UserData {
             int refreshTokenIndex = cursor.getColumnIndex(DBHelper.TOKEN_COLUMN_LOGIN_REFRESH_TOKEN);
             LoginAccessToken.getInstance().setAccessToken(cursor.getString(loginTokenIndex));
             LoginRefreshToken.getInstance().setRefreshToken(cursor.getString(refreshTokenIndex));
-            forLog = "Login token saved as : " + cursor.getString(loginTokenIndex) + ", refresh token saved as : " + cursor.getString(refreshTokenIndex);
+            forLog = "Login token saved as : " + LoginAccessToken.getInstance().getAccessToken() + ", refresh token saved as : " + LoginRefreshToken.getInstance().getRefreshToken();
         }
         Log.w(TAG, "Save tokens to DB: " + forLog);
         cursor.close();
@@ -110,10 +108,7 @@ public class UserData {
         String email = null;
         String password = null;
         if (cursor.moveToLast()) {
-            int emailIndex = cursor.getColumnIndex(DBHelper.USER_INFO_EMAIL);
-//            int passwordIndex = cursor.getColumnIndex(DBHelper.USER_INFO_PASSWORD);
-            email = cursor.getString(emailIndex);
-//            password = cursor.getString(passwordIndex);
+            email = cursor.getString(cursor.getColumnIndex(DBHelper.USER_INFO_EMAIL));
         }
 
         database.execSQL("UPDATE " + DBHelper.USER_INFO_TABLE + " SET " +
@@ -150,14 +145,10 @@ public class UserData {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         Cursor cursor = database.query(DBHelper.USER_INFO_TABLE, null, null, null, null, null, null);
         if (cursor.moveToLast()) {
-            int emailIndex = cursor.getColumnIndex(DBHelper.USER_INFO_EMAIL);
-            int name = cursor.getColumnIndex(DBHelper.USER_INFO_NAME);
-            int balance = cursor.getColumnIndex(DBHelper.USER_INFO_BALANCE);
-            int bonus = cursor.getColumnIndex(DBHelper.USER_INFO_BONUS);
-            MainScreenActivity.email.setText(cursor.getString(emailIndex));
-            MainScreenActivity.balance.setText(cursor.getString(balance));
-            MainScreenActivity.bonus.setText(cursor.getString(bonus));
-            MainScreenActivity.name.setText(cursor.getString(name));
+            MainScreenActivity.email.setText(cursor.getString(cursor.getColumnIndex(DBHelper.USER_INFO_EMAIL)));
+            MainScreenActivity.balance.setText(cursor.getString(cursor.getColumnIndex(DBHelper.USER_INFO_BALANCE)));
+            MainScreenActivity.bonus.setText(cursor.getString(cursor.getColumnIndex(DBHelper.USER_INFO_BONUS)));
+            MainScreenActivity.name.setText(cursor.getString(cursor.getColumnIndex(DBHelper.USER_INFO_NAME)));
         }
         cursor.close();
         database.close();

@@ -8,14 +8,14 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
 import tv.starcards.starcardstv.application.API;
 import tv.starcards.starcardstv.application.data.packetdata.PacketData;
-import tv.starcards.starcardstv.application.data.userdata.UserData;
-import tv.starcards.starcardstv.application.http.HttpRefreshLoginToken;
+import tv.starcards.starcardstv.application.http.RefreshLoginTokenRequest;
 
 public class RefreshPacketToken {
 
@@ -29,11 +29,11 @@ public class RefreshPacketToken {
 
     public void refreshPacketToken() {
         RequestQueue rq = Volley.newRequestQueue(context);
-        JsonObjectRequest req = new HttpRefreshLoginToken(Request.Method.POST, API.AUTH, null,
-                new Response.Listener<JSONObject>() {
+        StringRequest req = new RefreshLoginTokenRequest(Request.Method.POST, API.AUTH,
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d(TAG, response.toString());
+                    public void onResponse(String response) {
+                        Log.d(TAG, response);
                         setNewAccessLoginToken(response);
                     }
                 },
@@ -46,7 +46,7 @@ public class RefreshPacketToken {
         rq.add(req);
     }
 
-    private void setNewAccessLoginToken(JSONObject response) {
-        PacketData.getInstance().setPacketTokens(response.toString());
+    private void setNewAccessLoginToken(String response) {
+        PacketData.getInstance().setPacketTokens(response);
     }
 }

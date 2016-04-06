@@ -25,7 +25,7 @@
         android:background="@drawable/login_fields_background"
         android:drawableLeft="@drawable/login_drawable"
         android:drawableStart="@drawable/login_drawable"
-        android:text=""
+        android:text="vaschenko.volodymyr@gmail.com"
         android:layout_marginTop="91dp"
         android:layout_marginRight="26dp"
         android:layout_marginLeft="26dp"
@@ -34,7 +34,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
-
 
         <requestFocus />
     </EditText>
@@ -55,7 +54,7 @@
         android:paddingBottom="10dp"
         android:paddingRight="5dp"
         android:paddingEnd="5dp"
-        android:text=""
+        android:text="starcards"
         android:layout_below="@+id/login_field"
         android:layout_alignLeft="@+id/login_field"
         android:layout_alignStart="@+id/login_field"

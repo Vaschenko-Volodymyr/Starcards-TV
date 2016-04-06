@@ -11,4 +11,13 @@
         android:layout_centerInParent="true"
         android:text="Contacts Fragment\nIn process"/>
 
+    <Button
+        android:id="@+id/contacts_refresh_token_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/contacts_fragment_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="54dp"
+        android:text="Refresh"/>
+
 </RelativeLayout>

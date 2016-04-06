@@ -24,11 +24,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import tv.starcards.starcardstv.MainScreenActivity;
 import tv.starcards.starcardstv.R;
 import tv.starcards.starcardstv.application.API;
 import tv.starcards.starcardstv.application.ui.adaptors.MessageAdaptor;
-import tv.starcards.starcardstv.application.http.HttpGetWithLoginToken;
+import tv.starcards.starcardstv.application.http.GetWithLoginToken;
 import tv.starcards.starcardstv.application.ui.models.MessagesListModel;
 import tv.starcards.starcardstv.application.util.SearchToolbarUi;
 
@@ -68,7 +67,7 @@ public class MessageFragment extends Fragment {
 
     private void requestMessages() {
         RequestQueue rq = Volley.newRequestQueue(getContext());
-        JsonObjectRequest req = new HttpGetWithLoginToken(Request.Method.GET, API.MESSAGE_HISTORY, null,
+        JsonObjectRequest req = new GetWithLoginToken(Request.Method.GET, API.MESSAGE_HISTORY, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

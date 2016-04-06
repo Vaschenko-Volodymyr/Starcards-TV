@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -33,7 +32,6 @@ import tv.starcards.starcardstv.application.ui.adaptors.TvChannelsAdaptor;
 import tv.starcards.starcardstv.application.ui.models.TvChannelListModel;
 import tv.starcards.starcardstv.application.data.channelsdata.ChannelsDataRequest;
 import tv.starcards.starcardstv.application.util.SearchToolbarUi;
-import tv.starcards.starcardstv.application.widgets.CustomEditText;
 import tv.starcards.starcardstv.application.widgets.Fab;
 
 public class ChannelsFragment extends Fragment {
@@ -43,7 +41,7 @@ public class ChannelsFragment extends Fragment {
     public static Activity                      channelsListViewActivity = null;
     public static ArrayList<TvChannelListModel> channelsListArray;
     public static ListView                      channels;
-    public static PullToRefreshView             mPullToRefreshView;
+    public static PullToRefreshView mChannelsPullToRefreshView;
     public static Fab                           fab;
     public static ImageView                     notFoundImg;
     public static TextView                      notFoundText;
@@ -83,7 +81,7 @@ public class ChannelsFragment extends Fragment {
         channelsData = new ChannelsDataRequest(getContext(), packetId, resources);
         channelsListArray = new ArrayList<>();
         channels = (ListView) v.findViewById(R.id.tv_channels);
-        mPullToRefreshView = (PullToRefreshView) v.findViewById(R.id.channels_refresh_layout);
+        mChannelsPullToRefreshView = (PullToRefreshView) v.findViewById(R.id.channels_refresh_layout);
 
         SearchToolbarUi.resetToolbar(getActivity());
         MainScreenActivity.searchImage.setVisibility(View.VISIBLE);
@@ -137,22 +135,23 @@ public class ChannelsFragment extends Fragment {
 
         Log.w(TAG, "packetID = " + packetId);
 
-        mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
+        mChannelsPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mPullToRefreshView.postDelayed(new Runnable() {
+                mChannelsPullToRefreshView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         ChannelsData.getInstance().resetChannelsData();
                         requestChannelsData();
-                        mPullToRefreshView.setRefreshing(false);
-                        mPullToRefreshView.clearDisappearingChildren();
+                        mChannelsPullToRefreshView.setRefreshing(false);
+                        mChannelsPullToRefreshView.clearDisappearingChildren();
                     }
-                }, 300);
+                }, 100);
             }
         });
 
-        if (!IsLoggedByPacket.getInstance().isLogged()) {
+        if (!IsLoggedByPacket.getInstance().isLogged() || MainScreenActivity.justEntered) {
+            MainScreenActivity.justEntered = false;
             MainScreenActivity.pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
             MainScreenActivity.pDialog.setTitleText("Loading");
             MainScreenActivity.pDialog.show();

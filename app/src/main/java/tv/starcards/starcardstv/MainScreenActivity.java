@@ -104,7 +104,7 @@ public class MainScreenActivity extends AppCompatActivity
     private static final int       SETTINGS_ID = 3;
     private static final int       CONTACTS_ID = 4;
 
-    private static final String    TAG = "MainScreenActivity";
+    private static final String    TAG = MainScreenActivity.class.toString();
 
     private ViewPager              viewPager;
     private ViewPagerAdapter       adapter;

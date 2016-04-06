@@ -1,11 +1,11 @@
 package tv.starcards.starcardstv.application.ui.fragments;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +19,8 @@ import tv.starcards.starcardstv.MainScreenActivity;
 import tv.starcards.starcardstv.R;
 import tv.starcards.starcardstv.application.data.packetdata.PacketData;
 import tv.starcards.starcardstv.application.data.state.IsLogged;
+import tv.starcards.starcardstv.application.http.GetBearerLogin;
 import tv.starcards.starcardstv.application.ui.adaptors.PacketAdaptor;
-import tv.starcards.starcardstv.application.data.packetdata.PacketDataRequest;
 import tv.starcards.starcardstv.application.ui.models.PacketListModel;
 import tv.starcards.starcardstv.application.util.SearchToolbarUi;
 
@@ -30,10 +30,12 @@ public class CabinetFragment extends Fragment {
     public static ArrayList<PacketListModel> packetListArray;
     public static PacketAdaptor adapter;
     public static ListView packets;
-    public static PullToRefreshView mPullToRefreshView;
+    public static PullToRefreshView mCabinetPullToRefreshView;
+
+    private static final String TAG = "CabinetFragment";
 
     private Resources resources;
-    private PacketDataRequest packetData;
+    private GetBearerLogin request;
 
     public CabinetFragment() {
     }
@@ -51,24 +53,27 @@ public class CabinetFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_cabinet, container, false);
+        View v = inflater.inflate(R.layout.fragment_cabinet_activity, container, false);
 
         SearchToolbarUi.resetToolbar(getActivity());
 
-        packetData = new PacketDataRequest(getContext(), resources);
+        request = new GetBearerLogin(getContext());
 
         packetListArray = new ArrayList<>();
         packets = (ListView) v.findViewById(R.id.packets);
+        mCabinetPullToRefreshView = (PullToRefreshView) v.findViewById(R.id.cabinet_refresh_layout);
 
-        mPullToRefreshView = (PullToRefreshView) v.findViewById(R.id.cabinet_refresh_layout);
-        mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
+        mCabinetPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mPullToRefreshView.postDelayed(new Runnable() {
+                mCabinetPullToRefreshView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         PacketData.getInstance().resetPacketData();
                         requestPacketData();
+                        mCabinetPullToRefreshView.setRefreshing(false);
+                        mCabinetPullToRefreshView.clearDisappearingChildren();
+                        Log.d(TAG, "End of refreshing");
                     }
                 }, 100);
             }
@@ -90,6 +95,6 @@ public class CabinetFragment extends Fragment {
 
     private void requestPacketData() {
         packetListArray.clear();
-        packetData.fillPackets();
+        request.doRequest(GetBearerLogin.PACKETS_INFO_REQUEST);
     }
 }

@@ -29,7 +29,7 @@ import tv.starcards.starcardstv.application.util.Translit;
 
 public class ChannelsData {
 
-    private static final String TAG = "ChannelsData";
+    private static final String TAG = ChannelsData.class.toString();
     private static ChannelsData ourInstance = new ChannelsData();
 
     private DBHelper dbHelper;
