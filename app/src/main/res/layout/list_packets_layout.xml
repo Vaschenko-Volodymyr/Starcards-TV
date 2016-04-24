@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="12dip">
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
@@ -45,10 +46,7 @@
             android:padding="4dp"
             android:text="Название пакета"
             android:textColor="@color/black"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
+            android:ellipsize="end"
             android:singleLine="true"
             android:textSize="@dimen/packets_list_dimen"
             android:layout_below="@+id/packet_id"
@@ -62,6 +60,6 @@
         android:id="@+id/packet_logo"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@mipmap/packet_logo"/>
+        android:src="@drawable/packet_logo"/>
 
 </RelativeLayout>

@@ -28,15 +28,17 @@ import java.util.Map;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import tv.starcards.starcardstv.MainScreenActivity;
 import tv.starcards.starcardstv.R;
+import tv.starcards.starcardstv.application.API;
 import tv.starcards.starcardstv.application.data.db.DBHelper;
 import tv.starcards.starcardstv.application.data.packetdata.PacketData;
 import tv.starcards.starcardstv.application.data.state.IsLogged;
-import tv.starcards.starcardstv.application.http.GetBearerLogin;
+import tv.starcards.starcardstv.application.http.RequestWithLoginToken;
 import tv.starcards.starcardstv.application.ui.adaptors.PacketAdaptor;
 import tv.starcards.starcardstv.application.ui.models.PacketListModel;
 import tv.starcards.starcardstv.application.util.SearchToolbarUi;
 
 public class CabinetFragment extends Fragment {
+    private static final String     TAG = CabinetFragment.class.getSimpleName();
 
     public static Activity packetListViewActivity = null;
     public static ArrayList<PacketListModel> packetListArray;
@@ -46,10 +48,8 @@ public class CabinetFragment extends Fragment {
 
     public static CabinetFragment   instance;
 
-    private static final String     TAG = "CabinetFragment";
-
     private Resources               resources;
-    private GetBearerLogin          request;
+    private RequestWithLoginToken request;
 
     private String                  packetPassword;
     private String                  packetId;
@@ -72,11 +72,11 @@ public class CabinetFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_cabinet_activity, container, false);
+        View v = inflater.inflate(R.layout.fragment_cabinet_content, container, false);
 
         SearchToolbarUi.resetToolbar(getActivity());
 
-        request = new GetBearerLogin(getContext());
+        request = new RequestWithLoginToken();
 
         packetListArray = new ArrayList<>();
         packets = (ListView) v.findViewById(R.id.packets);
@@ -90,11 +90,9 @@ public class CabinetFragment extends Fragment {
                     public void run() {
                         PacketData.getInstance().resetPacketData();
                         requestPacketData();
-                        mCabinetPullToRefreshView.setRefreshing(false);
-                        mCabinetPullToRefreshView.clearDisappearingChildren();
                         Log.d(TAG, "End of refreshing");
                     }
-                }, 100);
+                }, 1000);
             }
         });
 
@@ -114,19 +112,20 @@ public class CabinetFragment extends Fragment {
 
     private void requestPacketData() {
         packetListArray.clear();
-        request.doRequest(GetBearerLogin.PACKETS_INFO_REQUEST);
+        request.get(RequestWithLoginToken.PACKETS_INFO_REQUEST);
     }
 
     public void onPacketsItemClick(int mPosition) {
         PacketListModel tempValues = CabinetFragment.packetListArray.get(mPosition);
         chosenPacketTitle = tempValues.getName();
-        packetId = PacketData.getInstance().getPacketData(chosenPacketTitle, DBHelper.PACKET_ID);
+        MainScreenActivity.packetId = packetId = PacketData.getInstance().getPacketData(chosenPacketTitle, DBHelper.PACKET_ID);
         packetPassword = PacketData.getInstance().getPacketData(chosenPacketTitle, DBHelper.PACKET_PASSWORD);
+        MainScreenActivity.packetTitle = PacketData.getInstance().getPacketData(chosenPacketTitle, DBHelper.PACKET_NAME);
         loginInPacket();
     }
 
     private void loginInPacket() {
-        String packetLoginUrl = "http://api28.starcards.tv/user/token";
+
         final String contentType = "Content-Type";
         final String contentTypeParameter = "application/x-www-form-urlencoded";
         final String type = "grant_type";
@@ -134,7 +133,7 @@ public class CabinetFragment extends Fragment {
         final String keyUsername = "username";
         final String keyPassword = "password";
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, packetLoginUrl,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, API.LOG_IN_PACKET,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

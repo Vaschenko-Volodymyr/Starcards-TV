@@ -21,6 +21,7 @@ import tv.starcards.starcardstv.application.API;
 import tv.starcards.starcardstv.application.data.tokens.LoginRefreshToken;
 import tv.starcards.starcardstv.application.data.userdata.UserData;
 import tv.starcards.starcardstv.application.http.RefreshLoginTokenRequest;
+import tv.starcards.starcardstv.application.http.RequestWithLoginToken;
 import tv.starcards.starcardstv.application.util.SearchToolbarUi;
 
 public class ContactsFragment extends Fragment {
@@ -52,25 +53,7 @@ public class ContactsFragment extends Fragment {
     }
 
     private void refreshTokens() {
-        StringRequest stringRequest = new RefreshLoginTokenRequest(Request.Method.POST, API.AUTH,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.w(TAG, response);
-                        UserData.getInstance().setLoginTokens(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("Login", "Error... " + error);
-                    }
-                }){
-        };
-
-        Log.d(TAG, LoginRefreshToken.getInstance().getRefreshToken());
-
-        RequestQueue requestQueue = Volley.newRequestQueue(MainScreenActivity.instance);
-        requestQueue.add(stringRequest);
+        RequestWithLoginToken request = new RequestWithLoginToken();
+        request.get(RequestWithLoginToken.USER_INFO_REQUEST);
     }
 }

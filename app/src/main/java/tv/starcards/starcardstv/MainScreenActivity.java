@@ -1,13 +1,9 @@
 package tv.starcards.starcardstv;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.inputmethodservice.Keyboard;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -22,9 +18,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -33,34 +26,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.squareup.picasso.Picasso;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import tv.starcards.starcardstv.application.API;
 import tv.starcards.starcardstv.application.data.channelsdata.ChannelsData;
-import tv.starcards.starcardstv.application.data.channelsdata.ChannelsDataRequest;
-import tv.starcards.starcardstv.application.data.db.DBHelper;
 import tv.starcards.starcardstv.application.data.packetdata.PacketData;
+import tv.starcards.starcardstv.application.data.state.SavedState;
 import tv.starcards.starcardstv.application.exceptions.NoDataException;
-import tv.starcards.starcardstv.application.http.HttpGetWithPacketToken;
 import tv.starcards.starcardstv.application.ui.fragments.CabinetFragment;
 import tv.starcards.starcardstv.application.ui.fragments.ChannelsFragment;
 import tv.starcards.starcardstv.application.ui.fragments.ContactsFragment;
@@ -69,29 +42,32 @@ import tv.starcards.starcardstv.application.ui.fragments.SettingsFragment;
 import tv.starcards.starcardstv.application.data.userdata.UserData;
 import tv.starcards.starcardstv.application.data.state.IsLogged;
 import tv.starcards.starcardstv.application.data.state.IsLoggedByPacket;
-import tv.starcards.starcardstv.application.ui.models.PacketListModel;
-import tv.starcards.starcardstv.application.ui.models.TvChannelListModel;
-import tv.starcards.starcardstv.application.ui.vlc.FullscreenVlcPlayer;
 import tv.starcards.starcardstv.application.util.NetWorkState;
-import tv.starcards.starcardstv.application.util.Parser;
 import tv.starcards.starcardstv.application.util.SearchToolbarUi;
 
 public class MainScreenActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+    private static final String      TAG = "Starcards-Tv App. ";
+    public static Context            sApplicationContext;
     public static MainScreenActivity instance;
+// __________________________________________________________________
     public static NavigationView   navigationView;
     public static SweetAlertDialog pDialog;
+
+    private DrawerLayout           drawer;
+    public static Toolbar          toolbar;
+    public static EditText         search;
+    public static ImageView        searchImage;
+    public static TextView         toolbarText;
 
     public static TextView         email;
     public static TextView         name;
     public static TextView         balance;
     public static TextView         bonus;
 
-    public static Toolbar          toolbar;
-    public static EditText         search;
-    public static ImageView        searchImage;
-    public static TextView         toolbarText;
+//    public static String           packetPassword;
+    public static String           packetId;
+    public static String           packetTitle;
 
     public static boolean          justEntered = false;
 
@@ -101,15 +77,9 @@ public class MainScreenActivity extends AppCompatActivity
     private static final int       SETTINGS_ID = 3;
     private static final int       CONTACTS_ID = 4;
 
-    private static final String    TAG = MainScreenActivity.class.toString();
-
     private ViewPager              viewPager;
     private ViewPagerAdapter       adapter;
-    private String                 packetPassword;
-    private String                 packetId;
-
     private NetWorkState           state;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,21 +87,19 @@ public class MainScreenActivity extends AppCompatActivity
         setContentView(R.layout.main_screen_activity);
 
         instance = this;
+        sApplicationContext = getApplicationContext();
 
+        // Toolbar widgets
         toolbar = (Toolbar) findViewById(R.id.app_bar_toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
         toolbarText = (TextView) findViewById(R.id.toolbar_text);
         search = (EditText) findViewById(R.id.toolbar_search);
         searchImage = (ImageView) findViewById(R.id.toolbar_search_img);
 
+        // Drawer widgets
+
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
         View header = navigationView.getHeaderView(0);
         email = (TextView) header.findViewById(R.id.nav_header_user_email);
@@ -140,54 +108,70 @@ public class MainScreenActivity extends AppCompatActivity
         balance = (TextView) header.findViewById(R.id.nav_header_user_balance);
         bonus = (TextView) header.findViewById(R.id.nav_header_user_bonus);
 
+        // Screen widgets
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        pDialog = new SweetAlertDialog(MainScreenActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+        // Handling widgets
+        setSupportActionBar(toolbar);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
 
-        state = new NetWorkState(this);
-
+        // Other inits and actions
         UserData.getInstance().initUserData(this);
         PacketData.getInstance().initPacketData(this, getResources());
         ChannelsData.getInstance().initChannelsData(this, getResources());
 
+        adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        pDialog = new SweetAlertDialog(MainScreenActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+        state = new NetWorkState(this);
         pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
         pDialog.setTitleText("Loading");
     }
 
     public void onResume() {
         super.onResume();
+
         if (state.networkIsAvailable()) {
             UserData.getInstance().initLoggedState();
-            if (IsLogged.getInstance().isLogged()) {
-                Log.w(TAG, "Inside on Resume: Brunch " + IsLogged.getInstance().isLogged());
-                UserData.getInstance().initLoginTokens();
-                UserData.getInstance().initUserInfo();
-                PacketData.getInstance().initLoggedByPacketState();
-                if (IsLoggedByPacket.getInstance().isLogged()) {
-                    PacketData.getInstance().initPacketTokens();
-                    try {
-                        packetId = PacketData.getInstance().getPacketId();
-                        packetPassword = PacketData.getInstance().getPacketPassword();
-                        navigationView.getMenu().getItem(0).setChecked(true);
-                        onNavigationItemSelected(navigationView.getMenu().getItem(0));
-                    } catch (NoDataException e) {
+            UserData.getInstance().loadUserData();
+            if (SavedState.getInstance().isFirstTimeEntered()) {
+                if (IsLogged.getInstance().isLogged()) {
+                    Log.w(TAG, "Inside on Resume: Brunch " + IsLogged.getInstance().isLogged());
+                    UserData.getInstance().initLoginTokens();
+                    UserData.getInstance().initUserInfo();
+                    PacketData.getInstance().initLoggedByPacketState();
+                    if (IsLoggedByPacket.getInstance().isLogged()) {
+                        PacketData.getInstance().initPacketTokens();
+                        try {
+                            packetId = PacketData.getInstance().getPacketId();
+                            navigationView.getMenu().getItem(0).setChecked(true);
+                            onNavigationItemSelected(navigationView.getMenu().getItem(0));
+                        } catch (NoDataException e) {
+                            navigationView.getMenu().getItem(1).setChecked(true);
+                            onNavigationItemSelected(navigationView.getMenu().getItem(1));
+                        }
+                    } else {
                         navigationView.getMenu().getItem(1).setChecked(true);
                         onNavigationItemSelected(navigationView.getMenu().getItem(1));
+                        Log.w(TAG, "IS LOGGED BY PACKET: " + String.valueOf(IsLoggedByPacket.getInstance().isLogged()));
                     }
                 } else {
-                    navigationView.getMenu().getItem(1).setChecked(true);
-                    onNavigationItemSelected(navigationView.getMenu().getItem(1));
-                    Log.w(TAG, "IS LOGGED BY PACKET: " + String.valueOf(IsLoggedByPacket.getInstance().isLogged()));
+                    Log.w(TAG, "Inside on Resume: Brunch " + IsLogged.getInstance().isLogged());
+                    Intent intent = new Intent(this, Login.class);
+                    startActivity(intent);
                 }
             } else {
-                Log.w(TAG, "Inside on Resume: Brunch " + IsLogged.getInstance().isLogged());
-                Intent intent = new Intent(this, Login.class);
-                startActivity(intent);
+                setupViewPager(viewPager, SavedState.getInstance().getParagraph());
             }
+
         } else {
             showNetworkStateError();
         }
+    }
+
+    public void onSaveInstanceState(Bundle bundle) {
+
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -243,14 +227,14 @@ public class MainScreenActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_current_packet) {
-            if (packetId == null) {
+            if (packetTitle == null) {
                 Animation animation = AnimationUtils.loadAnimation(this, R.anim.toolbar_text_shacking);
                 toolbarText.setText("Выберите пакет");
                 toolbarText.startAnimation(animation);
                 adapter.clearAll();
                 setupViewPager(viewPager, CABINET_ID);
             } else {
-                toolbarText.setText("Пакет : " + packetId);
+                toolbarText.setText("Пакет : " + packetTitle);
                 adapter.clearAll();
                 setupViewPager(viewPager, CHANNELS_ID);
             }
@@ -285,6 +269,7 @@ public class MainScreenActivity extends AppCompatActivity
     }
 
     private void setupViewPager(ViewPager viewPager, int id) {
+        SavedState.getInstance().setParagraph(id);
         adapter.clearAll();
         viewPager.setAdapter(null);
         Fragment fragment;
@@ -328,6 +313,13 @@ public class MainScreenActivity extends AppCompatActivity
                 .show();
 
     }
+
+    public static Context getContext() {
+        return sApplicationContext;
+    }
+
+    public static String AppTag() {
+        return TAG;
+    }
+
 }
-
-

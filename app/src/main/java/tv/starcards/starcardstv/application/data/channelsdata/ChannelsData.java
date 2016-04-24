@@ -164,13 +164,20 @@ public class ChannelsData {
                                            "OR " + column + " LIKE \""  + condition + "\" ";
                 cursor = database.rawQuery(advancedQuery, null);
                 Log.w(TAG, "loadChannelsFromDB: SQL LIKE query -> " + advancedQuery);
-                putInMap(channel, cursor);
-            } else {
-                // TODO: other select with LIKE conditions
-                cursor = database.rawQuery(query, null);
-                Log.w(TAG, "loadChannelsFromDB: SQL LIKE query -> " + query);
-                putInMap(channel, cursor);
             }
+            /*else if(column.equals(DBHelper.CHANNEL_FAVORITE)) {
+                String advancedQuery = "SELECT * FROM " + DBHelper.CHANNELS_TABLE + " " +
+                                        "WHERE " + column + " = \"" + condition + "\"";
+                cursor = database.rawQuery(advancedQuery, null);
+            }*/
+            else {
+                // TODO: other select with LIKE conditions
+                String advancedQuery = "SELECT * FROM " + DBHelper.CHANNELS_TABLE + " " +
+                        "WHERE " + column + " = \"" + condition + "\"";
+                cursor = database.rawQuery(advancedQuery, null);
+
+            }
+            putInMap(channel, cursor);
         } else {
             cursor = database.rawQuery(query, null);
             Log.w(TAG, "loadChannelsFromDB: SQL LIKE query -> " + query);
@@ -270,6 +277,15 @@ public class ChannelsData {
         ChannelsFragment.adapter.updateResults(ChannelsFragment.channelsListArray);
         ChannelsFragment.channels.setAdapter(ChannelsFragment.adapter);
         converter.setListViewHeightBasedOnChildren(ChannelsFragment.channels);
+    }
+
+    public void setChannelFavorite(String number, boolean isFavorite) {
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        String query = "UPDATE " + DBHelper.CHANNELS_TABLE + " " +
+                       "SET " + DBHelper.CHANNEL_FAVORITE + " = \'" + String.valueOf(isFavorite) + "\' " +
+                       "WHERE " + DBHelper.CHANNEL_NUMBER + " = " + number + " ";
+        database.execSQL(query);
+        Log.d(TAG, ": setChannelFavorite -> query = " + query);
     }
 
     public void resetChannelsData() {

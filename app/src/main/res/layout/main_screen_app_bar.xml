@@ -35,8 +35,15 @@
                     android:layout_centerVertical="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginStart="16dp"/>
+
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:singleLine="true"
+                    android:scrollHorizontally="true"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit ="marquee_forever"
+                    android:layout_alignRight="@+id/toolbar_search"
+                    android:layout_alignEnd="@+id/toolbar_search" />
 
                 <tv.starcards.starcardstv.application.widgets.CustomEditText
                     android:id="@+id/toolbar_search"

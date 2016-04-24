@@ -32,4 +32,11 @@
     <string name="fragment_settings_text_size_title">Размер шрифта</string>
     <string name="fragment_settings_text_size_content">Съешь ещё этих мягких французских булок, да выпей же чаю</string>
 
+    <!-- Channels info -->
+    <string name="isArchivable">Архивируется</string>
+    <string name="isFreeFirst">Без возрастных ограничений</string>
+    <string name="isFreeContinuous">, без возрастных ограничений</string>
+    <string name="isCensoredFirst">От 18 лет</string>
+    <string name="isCensoredContinuous">, от 18 лет</string>
+
 </resources>

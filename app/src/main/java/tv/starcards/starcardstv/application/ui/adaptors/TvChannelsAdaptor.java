@@ -2,7 +2,6 @@ package tv.starcards.starcardstv.application.ui.adaptors;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,7 @@ import tv.starcards.starcardstv.application.ui.models.TvChannelListModel;
 
 public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListener {
 
-    private Fragment              fragment;
+    private ChannelsFragment              fragment;
     private ArrayList             data;
     private static LayoutInflater inflater = null;
     public Resources              resources;
@@ -31,7 +30,9 @@ public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListen
     private String packetId;
     private String channelId;
 
-    public TvChannelsAdaptor(Fragment fragment, ArrayList data, Resources resources){
+    ViewHolder holder;
+
+    public TvChannelsAdaptor(ChannelsFragment fragment, ArrayList data, Resources resources){
         this.fragment = fragment;
         this.data = data;
         this.resources = resources;
@@ -59,11 +60,11 @@ public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListen
         public ImageView img;
         public CircleImageView available;
         public TextView info;
+        public ImageView favorite;
     }
 
     public View getView(int position, View convertView, ViewGroup parent){
         View view = convertView;
-        ViewHolder holder;
 
         if(convertView==null) {
             view = inflater.inflate(R.layout.list_channels_layout, null);
@@ -75,6 +76,7 @@ public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListen
             holder.img = (ImageView) view.findViewById(R.id.channel_logo);
             holder.available = (CircleImageView) view.findViewById(R.id.channel_is_available);
             holder.info = (TextView) view.findViewById(R.id.channel_info);
+            holder.favorite = (ImageView) view.findViewById(R.id.channel_favorite);
 
 
             view.setTag(holder);
@@ -96,24 +98,34 @@ public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListen
             }
 
             if (model.isFavorite()) {
-                holder.title.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.apptheme_btn_rating_star_on_normal_holo_light);
+                holder.favorite.setImageDrawable(resources.getDrawable(R.drawable.channel_is_favorite));
+            } else {
+                holder.favorite.setImageDrawable(resources.getDrawable(R.drawable.channel_is_not_favorite));
             }
 
+            String channelInfo = "";
             if (model.isArchivable()) {
-                holder.info.setText("Архивируется");
+                channelInfo = resources.getString(R.string.isArchivable);
             }
 
             if (model.isCensored()) {
-                if (holder.info.getText().toString().equals("Channel info")) {
-                    holder.info.setText("Возрастное ограничение - 18+");
+                if (channelInfo.equals("")) {
+                    channelInfo = resources.getString(R.string.isCensoredFirst);
                 } else {
-                    holder.info.setText(holder.info.getText().toString() + ", возрастное ограничение - 18+");
+                    channelInfo = channelInfo + resources.getString(R.string.isCensoredContinuous);
                 }
             }
 
+            if (channelInfo.equals("")) {
+                channelInfo = "Обычный канал";
+            }
+            holder.info.setText(channelInfo);
+
+            holder.favorite.setOnClickListener(new OnFavoriteIconClickListener(position));
             Picasso.with(fragment.getActivity().getApplicationContext()).load(model.getLogo()).into(holder.img);
 
             view.setOnLongClickListener(new OnLongItemClickListener(position));
+            view.setOnClickListener(new OnShortItemClick(position));
             this.packetId = model.getPacketId();
             this.channelId = model.getId();
 
@@ -131,31 +143,17 @@ public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListen
 
     }
 
-    private class OnStarcardsPlayerClickListener implements View.OnClickListener {
+    private class OnShortItemClick implements View.OnClickListener {
         private int position;
 
-        OnStarcardsPlayerClickListener(int position){
+        OnShortItemClick(int position){
             this.position = position;
         }
 
         @Override
         public void onClick(View arg0) {
-            ChannelsFragment container = (ChannelsFragment) fragment;
-            container.onStarcardsPlayerClick(position);
-        }
-    }
-
-    private class OnVLCPlayerClickListener implements View.OnClickListener {
-        private int position;
-
-        OnVLCPlayerClickListener(int position){
-            this.position = position;
-        }
-
-        @Override
-        public void onClick(View arg0) {
-            ChannelsFragment container = (ChannelsFragment) fragment;
-            container.onVLCPlayerClick(position);
+            ChannelsFragment container = fragment;
+            container.onChannelsItemClick(position);
         }
     }
 
@@ -168,9 +166,23 @@ public class TvChannelsAdaptor extends BaseAdapter implements View.OnClickListen
 
         @Override
         public boolean onLongClick(View v) {
-            ChannelsFragment container = (ChannelsFragment) fragment;
-            container.onChannelItemLongClick(position);
+            ChannelsFragment container = fragment;
+            container.onChannelsItemLongClick(position);
             return false;
+        }
+    }
+
+    private class OnFavoriteIconClickListener implements View.OnClickListener {
+        private int position;
+
+        OnFavoriteIconClickListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View v) {
+            ChannelsFragment container = fragment;
+            container.onChannelsFavoriteIconClick(position);
         }
     }
 

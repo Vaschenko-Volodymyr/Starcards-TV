@@ -119,9 +119,15 @@ public class UserData {
                         DBHelper.USER_INFO_BONUS + " = \"" + parser.parse(response, "bonus") + "\" "
 //                        DBHelper.USER_INFO_PASSWORD + " = \"" + password + "\" "
         );
+        loadUserData();
+        cursor.close();
+        database.close();
+    }
 
+    public void loadUserData() {
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        Cursor cursor = database.query(DBHelper.USER_INFO_TABLE, null, null, null, null, null, null);
         String forLog = "";
-        cursor = database.query(DBHelper.USER_INFO_TABLE, null, null, null, null, null, null);
         if (cursor.moveToLast()) {
             int id = cursor.getColumnIndex(DBHelper.USER_INFO_ID);
             int emailIndex = cursor.getColumnIndex(DBHelper.USER_INFO_EMAIL);
@@ -136,7 +142,7 @@ public class UserData {
             MainScreenActivity.bonus.setText(cursor.getString(bonus));
             MainScreenActivity.name.setText(cursor.getString(name));
         }
-        Log.w(TAG,forLog);
+        Log.w(TAG, forLog);
         cursor.close();
         database.close();
     }

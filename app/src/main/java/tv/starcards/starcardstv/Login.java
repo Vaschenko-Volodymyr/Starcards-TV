@@ -24,7 +24,7 @@ import java.util.Map;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import tv.starcards.starcardstv.application.API;
 import tv.starcards.starcardstv.application.data.userdata.UserData;
-import tv.starcards.starcardstv.application.http.GetBearerLogin;
+import tv.starcards.starcardstv.application.http.RequestWithLoginToken;
 import tv.starcards.starcardstv.application.util.NetWorkState;
 
 public class Login extends AppCompatActivity {
@@ -116,8 +116,8 @@ public class Login extends AppCompatActivity {
                             saveTokensToTheDB(response);
                             saveUserDataToTheDB();
                             setLogged();
-                            GetBearerLogin request = new GetBearerLogin(Login.this);
-                            request.doRequest(GetBearerLogin.USER_INFO_REQUEST);
+                            RequestWithLoginToken request = new RequestWithLoginToken();
+                            request.get(RequestWithLoginToken.USER_INFO_REQUEST);
                             login.setProgress(100);
                             Intent intent = new Intent(getApplicationContext(), MainScreenActivity.class);
                             startActivity(intent);

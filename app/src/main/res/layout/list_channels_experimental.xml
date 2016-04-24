@@ -55,7 +55,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginEnd="8dp"
                 android:paddingLeft="6dp"
-                android:drawableLeft="@mipmap/vlc_logo"
+                android:drawableLeft="@drawable/vlc_logo"
                 fbutton:buttonColor="@color/color_vlc"
                 fbutton:shadowColor="@color/color_vlc_shade"
                 fbutton:shadowEnabled="true"

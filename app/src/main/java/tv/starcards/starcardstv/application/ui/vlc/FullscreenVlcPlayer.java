@@ -3,8 +3,7 @@ package tv.starcards.starcardstv.application.ui.vlc;
 import tv.starcards.starcardstv.R;
 import tv.starcards.starcardstv.application.API;
 import tv.starcards.starcardstv.application.http.HttpGetWithPacketToken;
-import tv.starcards.starcardstv.application.util.Parser;
-import tv.starcards.starcardstv.application.util.SystemUiHider;
+import tv.starcards.starcardstv.application.util.UiHider;
 
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -43,7 +42,6 @@ import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaList;
 
 import java.lang.ref.WeakReference;
-import java.security.Timestamp;
 import java.util.Date;
 
 
@@ -51,7 +49,7 @@ import java.util.Date;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  *
- * @see SystemUiHider
+ * @see UiHider
  */
 public class FullscreenVlcPlayer extends Activity implements SurfaceHolder.Callback, IVideoPlayer {
 

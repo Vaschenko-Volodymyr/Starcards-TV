@@ -21,6 +21,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -37,6 +38,7 @@ import com.yalantis.phoenix.PullToRefreshView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -57,8 +59,8 @@ import tv.starcards.starcardstv.application.util.SearchToolbarUi;
 import tv.starcards.starcardstv.application.widgets.Fab;
 
 public class ChannelsFragment extends Fragment {
+    private static final String                 TAG = ChannelsFragment.class.getSimpleName();
 
-    public static MaterialSheetFab              materialSheetFab;
     public static TvChannelsAdaptor             adapter;
     public static Activity                      channelsListViewActivity = null;
     public static ArrayList<TvChannelListModel> channelsListArray;
@@ -70,13 +72,16 @@ public class ChannelsFragment extends Fragment {
 
     public static ChannelsFragment              instance;
 
-    private static final String                 TAG = "ChannelsFragment";
     public static boolean                       searchIsVisible = false;
+
+    private MaterialSheetFab                    materialSheetFab;
 
     private String                              packetId;
     private ChannelsDataRequest                 channelsData;
 
     Resources                                   resources;
+
+
 
     public ChannelsFragment() {
     }
@@ -109,6 +114,42 @@ public class ChannelsFragment extends Fragment {
 
         SearchToolbarUi.resetToolbar(getActivity());
         MainScreenActivity.searchImage.setVisibility(View.VISIBLE);
+
+        TextView favorite = (TextView) v.findViewById(R.id.fab_sheet_item_favorite);
+        favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChannelsData.getInstance().loadChannelsFromDB(DBHelper.CHANNEL_FAVORITE, "true");
+                materialSheetFab.hideSheet();
+            }
+        });
+
+        TextView all = (TextView) v.findViewById(R.id.fab_sheet_item_all);
+        all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChannelsData.getInstance().loadChannelsFromDB();
+                materialSheetFab.hideSheet();
+            }
+        });
+
+        TextView available = (TextView) v.findViewById(R.id.fab_sheet_item_available);
+        available.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChannelsData.getInstance().loadChannelsFromDB(DBHelper.CHANNEL_MONITORING_STATUS, "true");
+                materialSheetFab.hideSheet();
+            }
+        });
+
+        TextView censored = (TextView) v.findViewById(R.id.fab_sheet_item_censored);
+        censored.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChannelsData.getInstance().loadChannelsFromDB(DBHelper.CHANNEL_CENSORED, "true");
+                materialSheetFab.hideSheet();
+            }
+        });
 
         MainScreenActivity.searchImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,7 +234,17 @@ public class ChannelsFragment extends Fragment {
         channelsData.fillChannels();
     }
 
-    public void onChannelItemLongClick(int position) {
+    public void onChannelsItemClick(int position) {
+        TvChannelListModel values = ChannelsFragment.channelsListArray.get(position);
+        String url = API.PACKETS_SUMMARY + "/" + packetId + API.TV_CHANNELS + "/" + values.getId() + API.LINK;
+        if (values.getUrl().equals("false")) {
+            requestUrl(url);
+        } else {
+            goToVLCPlayer(values.getUrl());
+        }
+    }
+
+    public void onChannelsItemLongClick(int position) {
         TvChannelListModel value = ChannelsFragment.channelsListArray.get(position);
         Vibrator v = (Vibrator) this.getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(100);
@@ -215,7 +266,7 @@ public class ChannelsFragment extends Fragment {
         if ((value.isArchivable())) {
             message = message + "Канал архивируется.\n";
         } else {
-            message = message + ".Канал не архивируется\n";
+            message = message + "Канал не архивируется.\n";
         }
 
         if (value.isAvailable()) {
@@ -235,30 +286,18 @@ public class ChannelsFragment extends Fragment {
         Picasso.with(this.getActivity()).load(value.getLogo()).into(img);
     }
 
-    public void onStarcardsPlayerClick(int position) {
+    public void onChannelsFavoriteIconClick(int position) {
         TvChannelListModel values = ChannelsFragment.channelsListArray.get(position);
-        Intent intent = new Intent(this.getContext(), FullscreenVlcPlayer.class);
-        intent.putExtra("id", values.getId());
-//        intent.putExtra("name", values.getTitle());
-//        intent.putExtra("genre", values.getGenre());
-//        intent.putExtra("number", values.getNumber());
-//        intent.putExtra("ico", values.getLogo());
-//        intent.putExtra("censored", String.valueOf(values.isCensored()));
-//        intent.putExtra("available", String.valueOf(values.isAvailable()));
-//        intent.putExtra("archivable", String.valueOf(values.isArchivable()));
-//        intent.putExtra("favorite", String.valueOf(values.isFavorite()));
-        intent.putExtra("url", values.getUrl());
-        intent.putExtra("packetId", packetId);
-        startActivity(intent);
-    }
-
-    public void onVLCPlayerClick(int position) {
-        TvChannelListModel values = ChannelsFragment.channelsListArray.get(position);
-        String url = API.PACKETS_SUMMARY + "/" + packetId + API.TV_CHANNELS + "/" + values.getId() + API.LINK;
-        if (values.getUrl().equals("false")) {
-            requestUrl(url);
+        RelativeLayout rl = (RelativeLayout) getViewByPosition(position, channels);
+        ImageView favorite = (ImageView) rl.findViewById(R.id.channel_favorite);
+        if (values.isFavorite()) {
+            values.setFavorite(false);
+            ChannelsData.getInstance().setChannelFavorite(values.getNumber(), false);
+            favorite.setImageDrawable(getResources().getDrawable(R.drawable.channel_is_not_favorite));
         } else {
-            goToVLCPlayer(values.getUrl());
+            values.setFavorite(true);
+            ChannelsData.getInstance().setChannelFavorite(values.getNumber(), true);
+            favorite.setImageDrawable(getResources().getDrawable(R.drawable.channel_is_favorite));
         }
     }
 
@@ -300,5 +339,17 @@ public class ChannelsFragment extends Fragment {
         intent.setPackage("org.videolan.vlc");
         intent.setDataAndType(Uri.parse(url), "video/*");
         startActivity(intent);
+    }
+
+    private View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            final int childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
     }
 }

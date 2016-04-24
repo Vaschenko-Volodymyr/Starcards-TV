@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.yalantis.phoenix.PullToRefreshView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cabinet_refresh_layout"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -45,5 +44,4 @@
 
     <include layout="@layout/fragment_cabinet_content" />
 
-
-</com.yalantis.phoenix.PullToRefreshView>
+</android.support.design.widget.CoordinatorLayout>
